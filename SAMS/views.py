@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 from django.http import HttpResponse
 from django.template import  Context
 from django.template.loader import get_template
@@ -14,7 +15,7 @@ def login(request):
         if  request.POST.get('passwd',''):
             passwd = request.POST.get('passwd','')
         else:
-            error.append("Password is wrong!")
+            error.append("Password is invalid!")
     t = get_template('login.html')
     html = t.render(Context({"errors":error,"submit":submit}))
     return HttpResponse(html)
