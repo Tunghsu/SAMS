@@ -9,12 +9,15 @@
     </h4>
     {% else %}
 	{% if submit %}
-	<h4>Your input is valid<h4>
+	<h4><li>Your input is valid</li><h4>
 	{% endif %}
     {% endif %}
     <form action="" method="post">
         <p>用户名：<input type="text" name="user">
         <p>密码：&nbsp;&nbsp;&nbsp;&nbsp;<input type="password" name="passwd">
+        <p>学生<input type="radio" name="role" checked="checked" value="student" />
+	&nbsp;教师<input type="radio" name="role" value="teacher" />
+        &nbsp;管理员<input type="radio" name="role" value="administrator" />
         <p><input type="submit" value="登录">
     </form>
 </body>
