@@ -25,8 +25,11 @@ def login(request):
                             logged = True
                             request.session['uid'] = r.sID
                             request.session['group'] = 's'
+                            request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+                        else:
+                            error.append("Your username and password didn't match.") 
                     except Student.DoesNotExist:
-                            error.append("Your username and password didn't match.")
+                        error.append("Your username and password didn't match.")
             
             if request.POST.get('role','') == 'administrator':
                 try:
@@ -40,6 +43,9 @@ def login(request):
                             logged = True
                             request.session['uid'] = r.aID
                             request.session['group'] = 'a'
+                            request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+                        else:
+                            error.append("Your username and password didn't match.") 
                     except Administrator.DoesNotExist:
                         error.append("Your username and password didn't match.") 
             if request.POST.get('role','') == 'teacher':
@@ -54,6 +60,9 @@ def login(request):
                             logged = True
                             request.session['uid'] = r.tID
                             request.session['group'] = 't'
+                            request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+                        else:
+                            error.append("Your username and password didn't match.") 
 #Fliter找不到列表为空，不抛异常，模型里Get找不到才会抛异常
                     except Teacher.DoesNotExist:
                         error.append("Your username and password didn't match.") 
@@ -67,3 +76,11 @@ def login(request):
     return HttpResponse(html)
 def result(request):
     return HttpResponse('Managed to Login')
+def admin(request):
+    return HttpResponse('Admin Page')
+def check(request):
+    return HttpResponse('Assignment Check Page')
+def student(request):
+    return HttpResponse('Student main Page')
+def submit(request):
+    return HttpResponse('Main submit Page')
