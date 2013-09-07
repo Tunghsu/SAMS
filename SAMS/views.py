@@ -80,7 +80,14 @@ def admin(request):
     return HttpResponse('Admin Page')
 def check(request):
     return HttpResponse('Assignment Check Page')
-def student(request):
-    return HttpResponse('Student main Page')
+def view(request):
+    return HttpResponse('Teacher main Page')
 def submit(request):
+    try:
+        if (not 'uid' in request.session) or (request.session['group']<>'s'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+    #确认只有学生用户才能进行操作
+    
     return HttpResponse('Main submit Page')

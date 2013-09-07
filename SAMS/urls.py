@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from SAMS.views import login, result, admin, check, student, submit
+from SAMS.views import login, result, admin, check, submit, view
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -8,8 +8,9 @@ urlpatterns = patterns('',
     (r'^login/$', login),
     (r'^result/$', result),
     (r'^admin/$', admin),
+    (r'^view/$', view),
     (r'^check/$', check),
-    (r'^class/$', student),
+    #(r'^class/$', student),
     (r'^submit/$', submit),
     # Examples:
     # url(r'^$', 'SAMS.views.home', name='home'),
