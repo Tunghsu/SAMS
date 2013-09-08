@@ -35,9 +35,11 @@ class Assignment(models.Model):
 	clID = models.IntegerField()
 	asClID = models.IntegerField()
 	asDate = models.DateTimeField(auto_now=True)
+	asExpire = models.DateTimeField(auto_now=False)
 
 class AssignmentFile(models.Model):
 	asfID = models.IntegerField(primary_key=True)
+	asID = models.IntegerField()
 	asfType = models.CharField(max_length=50)
 	asfDir = models.CharField(max_length=50)
 	sID = models.IntegerField()
@@ -53,6 +55,7 @@ class Class_Course_Relation(models.Model):
 	clID = models.IntegerField(primary_key=True)
 	cID = models.IntegerField()
 	tID = models.IntegerField()
+	cPopu = models.IntegerField()
 
 class Student_Class_Relation(models.Model):
 	sID = models.IntegerField(primary_key=True)
