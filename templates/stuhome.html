@@ -1,0 +1,36 @@
+{% include "header.html" %}
+<body><form name="input" action="" method="get">
+
+<table border="1">
+	<tr>
+		<th>选择</th>
+		<th>序号</th>
+		<th>课程名</th>
+		<th>课程号</th>
+		<th>教师</th>
+		<th>课程人数</th>
+		<th>作业序号</th>
+		<th>提交期限</th>
+		<th>详细信息</th>
+		<th>是否提交</th>
+	</tr>
+{% for i in matrix %}
+<tr>
+  <td><input type="radio" name="radio" value="{{ forloop.counter }}" /></td>
+  <td>{{ i.classNum }}</td>
+  <td>{{ i.courseName }}</td>
+  <td>{{ i.classNum }}</td>
+  <td>{{ i.teacher }}</td>
+  <td>{{ i.population }}</td>
+  <td>{{ i.assignmentNum }}</td>
+  <td>{{ i.expire }}</td>
+  <td><a href="{{ i.assignmentDetail }}"><img src="" alt="详细信息"></a></td>
+  <td>{{ i.finish }}</td>
+</tr>
+{% endfor %}
+</table>
+<input type="file" value="上传文件" accept="image/gif" />
+</form>
+
+</body>
+{% include "footer.html" %}
