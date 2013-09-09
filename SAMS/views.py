@@ -79,7 +79,59 @@ def admin(request):
 def check(request):
     return HttpResponse('Assignment Check Page')
 def view(request):
-    return HttpResponse('Teacher main Page')
+    try:
+        if (not 'uid' in request.session) or (request.session['group']<>'t'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+    m = Class_Course_Relation.objects.filter(tID = request.session['uid']).order_by("clID")
+    if not m:
+        #无课程
+        pass
+    else:
+        line = {}
+        matrix = []
+        #try
+        for i in m:
+            line['classNum'] = i.clID
+            line['courseID'] = Class_Course_Relation.objects.get(clID = i.clID).cID
+            line['courseName'] = Course.objects.get(cID = line['courseID']).cName
+            line['population'] = Class_Course_Relation.objects.get(clID = i.clID).cPopu
+            line['assignmentNum'] = Assignment.objects.filter(clID = line['classNum']).order_by("-asDate")[0].asID
+            line['finishPopu'] = Assignment.objects.get(asID = line['assignmentNum']).asFinishPopu
+            line['assignmentAmount'] = Assignment.objects.filter(clID = i.clID).annotate(number = Count('clID'))[0].number
+            tmp = '%d' % line['assignmentNum']#格式化字符串,int -> string
+            line['assignmentDetail'] = 'http://localhost:8000/detail/'+tmp
+            line['viewassignment'] = 'http://localhost:8000/checkassign/'+tmp
+            matrix.append(line)
+        t = get_template("teacher.html")
+        html = t.render(Context({'title':'教师作业批改系统','matrix':matrix}))
+    return HttpResponse(html)
+def checkassign(request, offset):
+#教师检查作业
+    try:
+        if (not 'uid' in request.session) or (request.session['group']<>'t'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+    try:
+        assignmentNum = int (offset)
+    except:
+        #URL错误
+        pass
+    classNum = Assignment.objects.get(asID = assignmentNum).clID
+    title = '%d' % classNum
+    assignstr = '%d' % assignmentNum
+    title = title + '班级第'+ assignstr +'次作业统计'
+    fileList = AssignmentFile.objects.filter(asID = assignmentNum).order_by("sID")
+    line = {}
+    matrix = []
+    for i in fileList:
+        line['studentID'] = i.sID
+        line['submitDate'] = i.asfDate
+        line['studentName'] = Student.objects.get(sID = i.sID).sName
+        matrix.append(line)
+    return render_to_response('checkassign.html', {'title': title, 'matrix':matrix})
 def submit(request):
     try:
         if (not 'uid' in request.session) or (request.session['group']<>'s'):
@@ -104,6 +156,7 @@ def submit(request):
     #传入二维数组是s
     """
     if not m:
+        #无课程
         pass
     else:
         #try:

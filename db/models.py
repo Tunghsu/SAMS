@@ -41,7 +41,7 @@ class AssignmentFile(models.Model):
 	asfID = models.IntegerField(primary_key=True)
 	asID = models.IntegerField()
 	asfType = models.CharField(max_length=50)
-	asfDir = models.CharField(max_length=50)
+	asFile = models.FileField(upload_to = 'assignment')
 	sID = models.IntegerField()
 	asfDate = models.DateTimeField(auto_now=True)
 	
