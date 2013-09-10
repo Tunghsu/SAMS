@@ -1,0 +1,30 @@
+{% include "header.html" %}
+<body>
+<table border="1">
+	<tr>
+		<th>序号</th>
+		<th>课程名</th>
+		<th>课程号/th>
+		<th>课程人数/th>
+		<th>作业序号</th>
+		<th>已交人数</th>
+		<th>详细信息</th>
+		<th>批改作业</th>
+		<th>是否批改</th>
+	</tr>
+{% for i in matrix %}
+<tr>
+  <td>{{ i.classNum }}</td>
+  <td>{{ i.courseName }}</td>
+  <td>{{ i.courseID }}</td>
+  <td>{{ i.population }}</td>
+  <td>{{ i.assignmentNum }}</td>
+  <td>{{ i.assignmentAmount }}</td>
+  <td><a href="{{ i.assignmentDetail }}"><img src="" alt="无"></a></td>
+  <td><a href="{{ i.viewassignment }}"><img src="" alt="无"></a></td>
+  <td>{{ i.finishPopu }}</td>
+</tr>
+{% endfor %}
+</table>
+</body>
+{% include "footer.html" %}
