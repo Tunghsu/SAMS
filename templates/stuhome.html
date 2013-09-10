@@ -1,5 +1,7 @@
 {% include "header.html" %}
-<body><form name="input" action="" method="get">
+<body>
+<h3>{{ hint }}</h3></br>
+<form name="input" enctype="multipart/form-data" action="" method="POST">
 
 <table border="1">
 	<tr>
@@ -16,7 +18,8 @@
 	</tr>
 {% for i in matrix %}
 <tr>
-  <td><input type="radio" name="radio" value="{{ forloop.counter }}" /></td>
+  <td><input type="radio" name="radio" {% if forloop.first %}checked="checked"{% endif %}
+  value="{{ i.assignmentNum }}" /></td>
   <td>{{ i.classNum }}</td>
   <td>{{ i.courseName }}</td>
   <td>{{ i.classNum }}</td>
@@ -29,7 +32,8 @@
 </tr>
 {% endfor %}
 </table>
-<input type="file" value="上传文件" accept="image/gif" />
+<input type="file" name= "File" value="上传文件"/>
+<input type="submit" action=""/>
 </form>
 
 </body>
