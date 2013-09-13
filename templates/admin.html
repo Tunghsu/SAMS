@@ -1,0 +1,55 @@
+{% include "header.html" %}
+<body>
+ {% if hint %}
+ <h3>{{ hint }} </h3>
+ {% endif %}
+ <form action="" method="post">
+        <p>用户名：<input type="text" name="uid">
+        <p>密码：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="password" name="passwd">
+		<p>姓名：&nbsp;&nbsp;&nbsp;&nbsp;<input  type="text" name="name">
+		<p>邮箱：&nbsp;&nbsp;&nbsp;&nbsp;<input  type="text" name="mail">
+        <p>学生<input type="radio" class="input-medium"  name="q" checked="checked" value="student" />
+	&nbsp;教师<input type="radio" name="q" value="teacher" />
+        &nbsp;管理员<input type="radio" name="q" value="admin" />
+        <p><input type="submit" class="btn btn-primary" value="确定">
+    </form>
+
+	 <form action="" method="post">
+        <p>课程号：<input type="text" name="id">
+        <p>课程名：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="name">
+        <p><input type="submit" class="btn btn-primary" value="确定">
+    </form>
+	
+	 <form action="" method="post">
+        <p>班级号：<input type="text" name="classID"> 
+        <p>课程号：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="courseID"> 
+		<p>教师号：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="teacher"> 
+		<p>课程人数：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="amount"> 
+		<p><input type="submit" class="btn btn-primary" value="确定">
+    </form>
+	
+	<form action="" method="post">
+        <p>用户名：<input type="text" name="uid"> 
+		<p>课程号：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="className"> 
+		<p><input type="submit" class="btn btn-primary" value="确定">
+    </form>
+<table border="1">
+	<tr>
+		<th>选择</th>
+		<th>课程序号</th>
+		<th>课程名称</th>
+		<th>查看</th>
+	</tr>
+<form>
+	{% for i in matrix %}	
+	<tr>
+		<td><input type="checkbox" name="box" value ="{{ i.courseID }}" > </td>
+		<td>{{ i.courseID }}</td>
+		<td>{{ i.courseName }}</td>
+		<td><a href="{{ i.viewcourse }}"><img src="" alt="详细信息"></td>
+	</tr>
+{% endfor %}
+</table>
+<input type="submit" action="" value="删除"></form>
+</body>
+{% include "footer.html" %}

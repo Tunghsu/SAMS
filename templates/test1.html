@@ -1,0 +1,26 @@
+{% include "header.html" %}
+<body><form name="input" action="" method="get">
+
+<table border="1">
+	<tr>
+		<th>选择</th>
+		<th>1</th>
+		<th>2</th>
+		<th>3</th>
+		<th>查看</th>
+	</tr>
+{% for i in matrix %}
+<tr>
+  <td><input type="checkbox" name="" value="{{ forloop.counter }}" /></td>
+  <td>{{ i. }}</td>
+  <td>{{ i. }}</td>
+  <td>{{ i. }}</td>
+  <td><a href="{{ i.assignmentDetail }}"><img src="" alt="详细信息"></a></td>
+</tr>
+{% endfor %}
+</table>
+<input type="submit" value="删除"  />
+</form>
+
+</body>
+{% include "footer.html" %}

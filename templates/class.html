@@ -1,0 +1,22 @@
+{% include "header.html" %}
+<body><form name="input" action="" method="get">
+
+<table border="1">
+	<tr>
+		<th>选择</th>
+		<th>学生编号</th>
+		<th>学生姓名</th>
+	</tr>
+{% for i in matrix %}
+<tr>
+  <td><input type="checkbox" name="box" value="{{ i.studentID }}" /></td>
+  <td>{{ i.studentID }}</td>
+  <td>{{ i.studentName }}</td>
+</tr>
+{% endfor %}
+</table>
+<input type="submit" value="删除"  />
+</form>
+
+</body>
+{% include "footer.html" %}
