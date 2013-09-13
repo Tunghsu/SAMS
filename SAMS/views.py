@@ -258,7 +258,6 @@ def submit(request):
         asfID = AssignmentFile.objects.order_by('asfID')[0].asfID+1
         asID = request.POST['radio']
         sID = request.session['uid']
-        asfIDStr = '%d' % asfID
         sIDStr = '%d' % sID
         sName = Student.objects.get(sID = sID).sName
         request.FILES['File'].name = sIDStr+'_'+sName+'_'+request.FILES['File'].name
@@ -356,4 +355,63 @@ def download(request, offset):
         #except DoesNot Exist
         #Raise 404
     return response
+def profile(request):
+    try:
+        if (not 'uid' in request.session) or (request.session['group']==''):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+    hint=[]
+    if request.method == 'POST':
+        if request.session['group']=='s':
+            if Student.objects.get(sID = request.session['uid']).sPasswd==request.POST['oldpasswd']:
+                if request.POST['user']:
+                    Student.objects.filter(sID = request.session['uid']).update(sName = request.POST['user'])
+                    hint.append("Username Changed")
+                if request.POST['mail']:
+                    Student.objects.filter(sID = request.session['uid']).update(sMail = request.POST['mail'])
+                    hint.append("Email Changed")
+                try:
+                    if request.POST['passwd']==request.POST['passwd2'] and request.POST['passwd']:
+                        Student.objects.filter(sID = request.session['uid']).update(sPasswd = request.POST['passwd'])
+                        hint.append('Password Changed')
+                except:
+                    pass
+        if request.session['group']=='t':
+            if Teacher.objects.get(tID = request.session['uid']).tPasswd==request.POST['oldpasswd']:
+                if request.POST['user']:
+                    Teacher.objects.filter(tID = request.session['uid']).update(tName = request.POST['user'])
+                    hint.append("Username Changed")
+                if request.POST['mail']:
+                    Teacher.objects.filter(tID = request.session['uid']).update(tMail = request.POST['mail'])
+                    hint.append("Email Changed")
+                try:
+                    if request.POST['passwd']==request.POST['passwd2'] and request.POST['passwd']:
+                        Teacher.objects.filter(tID = request.session['uid']).update(tPasswd = request.POST['passwd'])
+                        hint.append("用户密码已更改")
+                except:
+                    pass
+        if request.session['group']=='a':
+            if Administrator.objects.get(aID = request.session['uid']).aPasswd==request.POST['oldpasswd']:
+                if request.POST['user']:
+                    Administrator.objects.filter(aID = request.session['uid']).update(aName = request.POST['user'])
+                    hint.append(u"Username Changed")
+                if request.POST['mail']:
+                    Administrator.objects.filter(aID = request.session['uid']).update(aMail = request.POST['mail'])
+                    hint.append("Email Changed")
+                try:
+                    if request.POST['passwd']==request.POST['passwd2'] and request.POST['passwd']:
+                        Administrator.objects.filter(aID = request.session['uid']).update(aPasswd = request.POST['passwd'])
+                        hint.append("用户密码已更改")
+                except:
+                    pass
+    return render_to_response('profile.html', {'title': "修改个人信息", 'hint':hint})
+def logout(request):
+    try:
+        if request.session['uid']:
+            del request.session['uid']
+            del request.session['group']
+    except:
+        pass
+    return HttpResponseRedirect('/login/') 
         
