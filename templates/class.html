@@ -1,5 +1,9 @@
 {% include "header.html" %}
-<body><form name="input" action="" method="get">
+<body>
+ {% if hint %}
+ <h3>{{ hint }} </h3>
+ {% endif %}
+<form name="input" action="" method="get">
 
 <table border="1">
 	<tr>

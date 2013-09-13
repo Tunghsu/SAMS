@@ -86,6 +86,16 @@ def admin(request):
     except KeyError:
         return HttpResponseRedirect('/login/')
     hint = ''
+    if 'box' in request.GET:
+        for j in request.GET['box']:
+            classID = Class_Course_Relation.objects.filter(cID = j).clID
+            for i in classID:
+                Assignment.objects.filter(clID = i).delete()
+                AssignmentFile.objects.filter(clID = i).delete()
+                Student_Class_Relation.objects.filter(clID = i).delete()
+                Class_Course_Relation.objects.filter(cID = j).delete()
+                Course.objects.filter(cID = j).delete()
+        hint = 'Course Deleted'
     if 'q' in request.POST:#需要后台检测字符转换数字
         if request.POST['q'] == 'student':
             instance = Student(sID=request.POST['uid'], sName=request.POST['name'],sPasswd=request.POST['passwd'],sMail=request.POST['mail'])
@@ -122,13 +132,21 @@ def admin(request):
         tmp ='%d' % i.cID
         line['viewcourse'] = 'http://localhost:8000/course/'+tmp
         matrix.append(dict(line))    
-    return  render_to_response('admin.html', {'title': "管理页面", 'hint':hint, 'matrix':matrix})
+    return  render_to_response('admin.html', {'title': "管理页面",  'hint':hint, 'matrix':matrix})
 def course(request, offset):
     try:
         if (not 'uid' in request.session) or (request.session['group']<>'a'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
+    hint = ''
+    if 'box' in request.GET:
+        for j in request.GET['box']:
+            Assignment.objects.filter(clID = j).delete()
+            AssignmentFile.objects.filter(clID = j).delete()
+            Student_Class_Relation.objects.filter(clID = j).delete()
+            Class_Course_Relation.objects.filter(clID = j).delete()
+        hint = 'Class Deleted'
     #try:
     para = int (offset)
     #except:
@@ -144,13 +162,19 @@ def course(request, offset):
         tmp ='%d' % i.clID
         line['viewcourse'] = 'http://localhost:8000/class/'+tmp
         matrix.append(dict(line))
-    return  render_to_response('course.html', {'title': courseStr+"课程班级查看页面", 'matrix':matrix})
+    return  render_to_response('course.html', {'title': courseStr+"课程班级查看页面", 'matrix':matrix, 'hint':hint})
 def classes(request, offset):
     try:
         if (not 'uid' in request.session) or (request.session['group']<>'a'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
+    hint = ''
+    if 'box' in request.GET:
+        for j in request.GET['box']:
+            AssignmentFile.objects.filter(sID = j).delete()
+            Student_Class_Relation.objects.filter(sID = j).delete()
+        hint = 'Student of the class Deleted'
     #try:
     para = int (offset)
     #except:
@@ -163,7 +187,7 @@ def classes(request, offset):
         line['studentName'] = Student.objects.get(sID = i.sID).sName
         line['studentID'] = i.sID
         matrix.append(dict(line))
-    return  render_to_response('class.html', {'title': offset+"班级学生查看页面", 'matrix':matrix})
+    return  render_to_response('class.html', {'title': offset+"班级学生查看页面", 'matrix':matrix,'hint':hint})
 def check(request):
     return HttpResponse('Assignment Check Page')
 def view(request):
