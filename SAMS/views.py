@@ -27,7 +27,7 @@ def login(request):
                         if r.sPasswd == passwd:
                             request.session['uid'] = r.sID
                             request.session['group'] = 's'
-                            if not 'remember' in request.POST['box']:
+                            if not 'box' in request.POST:
                                 request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
                         else:
                             error.append("Your username and password didn't match.") 
@@ -45,7 +45,7 @@ def login(request):
                         if r.aPasswd == passwd:
                             request.session['uid'] = r.aID
                             request.session['group'] = 'a'
-                            if not 'remember' in request.POST['box']:
+                            if not 'box' in request.POST:
                                 request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
                         else:
                             error.append("Your username and password didn't match.") 
@@ -62,7 +62,7 @@ def login(request):
                         if r.tPasswd == passwd:
                             request.session['uid'] = r.tID
                             request.session['group'] = 't'
-                            if not 'remember' in request.POST['box']:
+                            if not 'box' in request.POST:
                                 request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
                         else:
                             error.append("Your username and password didn't match.") 
