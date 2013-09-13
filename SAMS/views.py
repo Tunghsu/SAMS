@@ -7,6 +7,7 @@ from db.models import Administrator, Teacher, Student, Student_Class_Relation, C
 from django.shortcuts import render_to_response
 from django.core.servers.basehttp import FileWrapper
 import os, mimetypes
+from django.core.files.storage import default_storage
 
 def login(request):
     error = []
@@ -119,7 +120,7 @@ def admin(request):
         instance.save()
         hint = 'Add class Done!'
     if  'className' in request.POST:
-        num = Student.objects.filter(sID = request.POST['uid']).order_by('sClID')[0]
+        num = Student_Class_Relation.objects.filter(sID = request.POST['uid']).order_by('-sClID')[0]+1
         instance = Student_Class_Relation(sID=request.POST['uid'], clID=request.POST['className'],sClID=num)
         instance.save()
         hint = 'Add Student to Class Done!'
@@ -255,11 +256,14 @@ def submit(request):
     hint = ''
     if request.method == 'POST':
         #asf自更新加一
-        asfID = AssignmentFile.objects.order_by('asfID')[0].asfID+1
+        asfID = AssignmentFile.objects.order_by('-asfID')[0].asfID+1
         asID = request.POST['radio']
         sID = request.session['uid']
         sIDStr = '%d' % sID
         sName = Student.objects.get(sID = sID).sName
+        if AssignmentFile.objects.filter(asID = request.POST['radio'], sID = request.session['uid'])<>[]:
+            default_storage.delete('/home/tunghsu/workspace/SAMS/media/'+str(AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).asFile))
+            AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).delete()
         request.FILES['File'].name = sIDStr+'_'+sName+'_'+request.FILES['File'].name
         instance = AssignmentFile(asfID = asfID ,sID = sID, asID = asID, asFile = request.FILES['File'])
         instance.save()
@@ -296,7 +300,6 @@ def submit(request):
                 try:
                     line['assignmentNum'] = Assignment.objects.filter(clID = line['classNum']).annotate(number = Count('clID'))[0].number
                     if  line['assignmentNum']:
-                        print line['assignmentNum']
                         line['assignmentNum'] = Assignment.objects.filter(clID = line['classNum']).order_by("-asDate")[0].asID
                                                 #有问题
                         line['expire'] = Assignment.objects.get(asID = line['assignmentNum']).asExpire
