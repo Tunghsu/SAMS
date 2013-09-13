@@ -7,7 +7,6 @@ from db.models import Administrator, Teacher, Student, Student_Class_Relation, C
 from django.shortcuts import render_to_response
 from django.core.servers.basehttp import FileWrapper
 import os, mimetypes
-import settings
 
 def login(request):
     error = []
@@ -78,7 +77,90 @@ def login(request):
 def result(request):
     return HttpResponse('Managed to Login')
 def admin(request):
-    return HttpResponse('Admin Page')
+    try:
+        if (not 'uid' in request.session) or (request.session['group']<>'a'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+    hint = ''
+    if 'q' in request.POST:#需要后台检测字符转换数字
+        if request.POST['q'] == 'student':
+            instance = Student(sID=request.POST['uid'], sName=request.POST['name'],sPasswd=request.POST['passwd'],sMail=request.POST['mail'])
+            instance.save()
+            hint = 'Add Student Done!'
+        elif request.POST['q'] == 'teacher':
+            instance = Teacher(tID=request.POST['uid'], tName=request.POST['name'],tPasswd=request.POST['passwd'],tMail=request.POST['mail'])
+            instance.save()
+            hint = 'Add Teacher Done!'
+        elif request.POST['q'] == 'admin':
+            instance = Administrator(aID=request.POST['uid'], aName=request.POST['name'],aPasswd=request.POST['passwd'],aMail=request.POST['mail'])
+            instance.save()
+            hint = 'Add Admin Done!'
+    if 'id' in request.POST:
+        para =  int (request.POST['id'])
+        instance = Course(cID=para, cName=request.POST['name'])
+        instance.save()
+        hint = 'Add Course Done!'
+    if 'amount' in request.POST:
+        instance = Class_Course_Relation(cID=request.POST['courseID'], clID=request.POST['classID'],tID=request.POST['teacher'],cPopu=request.POST['amount'])
+        instance.save()
+        hint = 'Add class Done!'
+    if  'className' in request.POST:
+        num = Student.objects.filter(sID = request.POST['uid']).order_by('sClID')[0]
+        instance = Student_Class_Relation(sID=request.POST['uid'], clID=request.POST['className'],sClID=num)
+        instance.save()
+        hint = 'Add Student to Class Done!'
+    m = Course.objects.all().order_by("cID")
+    line ={}
+    matrix = []
+    for i in m:
+        line['courseName'] = i.cName
+        line['courseID'] = i.cID
+        tmp ='%d' % i.cID
+        line['viewcourse'] = 'http://localhost:8000/course/'+tmp
+        matrix.append(dict(line))    
+    return  render_to_response('admin.html', {'title': "管理页面", 'hint':hint, 'matrix':matrix})
+def course(request, offset):
+    try:
+        if (not 'uid' in request.session) or (request.session['group']<>'a'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+    #try:
+    para = int (offset)
+    #except:
+        #URL错误
+        #pass
+    m = Class_Course_Relation.objects.filter(cID = para).order_by("clID")
+    courseStr = Course.objects.get(cID = para).cName
+    line = {}
+    matrix = []
+    for i in m:
+        line['classID'] = i.clID
+        line['teacher'] = Teacher.objects.get(tID = i.tID).tName
+        tmp ='%d' % i.clID
+        line['viewcourse'] = 'http://localhost:8000/class/'+tmp
+        matrix.append(dict(line))
+    return  render_to_response('course.html', {'title': courseStr+"课程班级查看页面", 'matrix':matrix})
+def classes(request, offset):
+    try:
+        if (not 'uid' in request.session) or (request.session['group']<>'a'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+    #try:
+    para = int (offset)
+    #except:
+        #URL错误
+        #pass
+    m = Student_Class_Relation.objects.filter(clID = para).order_by("sID")
+    line = {}
+    matrix = []
+    for i in m:
+        line['studentName'] = Student.objects.get(sID = i.sID).sName
+        line['studentID'] = i.sID
+        matrix.append(dict(line))
+    return  render_to_response('class.html', {'title': offset+"班级学生查看页面", 'matrix':matrix})
 def check(request):
     return HttpResponse('Assignment Check Page')
 def view(request):
@@ -106,7 +188,7 @@ def view(request):
             tmp = '%d' % line['assignmentNum']#格式化字符串,int -> string
             line['assignmentDetail'] = 'http://localhost:8000/detail/'+tmp
             line['viewassignment'] = 'http://localhost:8000/checkassign/'+tmp
-            matrix.append(line)
+            matrix.append(dict(line))
         t = get_template("teacher.html")
         html = t.render(Context({'title':'教师作业批改系统','matrix':matrix}))
     return HttpResponse(html)
@@ -135,7 +217,7 @@ def checkassign(request, offset):
         line['studentName'] = Student.objects.get(sID = i.sID).sName
         assignmentFileNum = '%d' % i.asfID
         line['downloadLink'] = 'http://localhost:8000/download/'+ assignmentFileNum
-        matrix.append(line)
+        matrix.append(dict(line))
     return render_to_response('checkassign.html', {'title': title, 'matrix':matrix})
 def submit(request):
     try:
@@ -143,7 +225,6 @@ def submit(request):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
-    #确认只有学生用户才能进行操作
     hint = ''
     if request.method == 'POST':
         #asf自更新加一
@@ -186,24 +267,30 @@ def submit(request):
                 teacherID = Class_Course_Relation.objects.get(clID = i.clID).tID
                 line['teacher'] = Teacher.objects.get(tID = teacherID).tName
                 line['population'] = Class_Course_Relation.objects.get(clID = i.clID).cPopu
-                line['assignmentNum'] = Assignment.objects.filter(clID = line['classNum']).order_by("-asDate")[0].asID
-                line['expire'] = Assignment.objects.get(asID = line['assignmentNum']).asExpire
-                tmp = '%d' %line['assignmentNum']#格式化字符串,int -> string
-                line['assignmentDetail'] = 'http://localhost:8000/detail/'+tmp
-                found =  AssignmentFile.objects.filter(asID = line['assignmentNum'], sID = request.session['uid'])
-                if found:
-                    line['finish'] = "已提交"
-                else:
-                    line['finish'] = "尚未提交"
-                matrix.append(line)
-        #except :
-            #数据库出错 
+                try:
+                    line['assignmentNum'] = Assignment.objects.filter(clID = line['classNum']).annotate(number = Count('clID'))[0].number
+                    if  line['assignmentNum']:
+                        print line['assignmentNum']
+                        line['assignmentNum'] = Assignment.objects.filter(clID = line['classNum']).order_by("-asDate")[0].asID
+                                                #有问题
+                        line['expire'] = Assignment.objects.get(asID = line['assignmentNum']).asExpire
+                        tmp = '%d' %line['assignmentNum']#格式化字符串,int -> string
+                        line['assignmentDetail'] = 'http://localhost:8000/detail/'+tmp
+                        found =  AssignmentFile.objects.filter(asID = line['assignmentNum'], sID = request.session['uid'])
+                        if found:
+                            line['finish'] = "已提交"
+                        else:
+                            line['finish'] = "尚未提交"
+                except:
+                    pass
+                matrix.append(dict(line))
+            #except :
+                        #数据库出错 
             #print 'Failed' 
             #pass 
-            t = get_template('stuhome.html')       
-            html = t.render(Context({'matrix':matrix, 'title':"作业提交模块", 'hint':hint}))    
-            return HttpResponse(html)
-    return HttpResponse('Main submit Page')
+    t = get_template('stuhome.html')       
+    html = t.render(Context({'matrix':matrix, 'title':"作业提交模块", 'hint':hint}))    
+    return HttpResponse(html)
 def viewAssignment(request, offset):
     #try:
         para = int (offset)
