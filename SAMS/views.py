@@ -27,7 +27,8 @@ def login(request):
                         if r.sPasswd == passwd:
                             request.session['uid'] = r.sID
                             request.session['group'] = 's'
-                            request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+                            if not 'remember' in request.POST['box']:
+                                request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
                         else:
                             error.append("Your username and password didn't match.") 
                     except Student.DoesNotExist:
@@ -44,7 +45,8 @@ def login(request):
                         if r.aPasswd == passwd:
                             request.session['uid'] = r.aID
                             request.session['group'] = 'a'
-                            request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+                            if not 'remember' in request.POST['box']:
+                                request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
                         else:
                             error.append("Your username and password didn't match.") 
                     except Administrator.DoesNotExist:
@@ -60,7 +62,8 @@ def login(request):
                         if r.tPasswd == passwd:
                             request.session['uid'] = r.tID
                             request.session['group'] = 't'
-                            request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+                            if not 'remember' in request.POST['box']:
+                                request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
                         else:
                             error.append("Your username and password didn't match.") 
 #Fliter找不到列表为空，不抛异常，模型里Get找不到才会抛异常
@@ -293,43 +296,40 @@ def submit(request):
     return HttpResponse(html)
 def viewAssignment(request, offset):
     #try:
-        para = int (offset)
+    para = int (offset)
     #except:
         #URL错误
         #pass
-        txt = Assignment.objects.get(asID = para).asTXT;
-        return  render_to_response('blank.html', {'title': "作业详情",'txt':txt})
+    txt = Assignment.objects.get(asID = para).asTXT;
+    return  render_to_response('blank.html', {'title': "作业详情",'txt':txt})
 def download(request, offset):
     #try:
-        para = int (offset)
+    para = int (offset)
     #except:
         #404
-        pass
-        #try:
-        filefield = AssignmentFile.objects.get(asfID = para).asFile
-        files = file(u'/home/tunghsu/workspace/SAMS/media/'+filefield.name)
-        wrapper = FileWrapper(files)#分段处理，每段8K
-        mimetype = mimetypes.guess_type(u'http://www.aol.com/'+filefield.name)[0]
-        print filefield.name
-        print mimetype
-        response = HttpResponse(wrapper, content_type=mimetype)
-        if u'WebKit' in request.META['HTTP_USER_AGENT']:
+    #try:
+    filefield = AssignmentFile.objects.get(asfID = para).asFile
+    files = file(u'/home/tunghsu/workspace/SAMS/media/'+filefield.name)
+    wrapper = FileWrapper(files)#分段处理，每段8K
+    mimetype = mimetypes.guess_type(u'http://www.aol.com/'+filefield.name)[0]
+    response = HttpResponse(wrapper, content_type=mimetype)
+    if u'WebKit' in request.META['HTTP_USER_AGENT']:
         # Safari 3.0 and Chrome 2.0 accepts UTF-8 encoded string directly.
-            filename_header = 'filename=%s' % filefield.name.encode('utf-8')
-        elif u'MSIE' in request.META['HTTP_USER_AGENT']:
+        filename_header = 'filename=%s' % filefield.name.encode('utf-8')
+    elif u'MSIE' in request.META['HTTP_USER_AGENT']:
         # IE does not support internationalized filename at all.
         # It can only recognize internationalized URL, so we do the trick via routing rules.
-            filename_header = 'filename=%s' % filefield.name.encode('utf-8')
+        filename_header = 'filename=%s' % filefield.name.encode('utf-8')
         #else:
         # For others like Firefox, we follow RFC2231 (encoding extension in HTTP headers).
         #filename_header = 'filename*=UTF-8\'\'%s' % urllib.quote(filefield.name.encode('utf-8'))
         #response = HttpResponse(filefield.read(),mimetype = "image/png")
-        response['Content-Length'] = os.path.getsize(u'/home/tunghsu/workspace/SAMS/media/'+filefield.name)
-        response['Content-Disposition'] = 'attachment; ' + filename_header#用户名带有路径，需要改
+    response['Content-Length'] = os.path.getsize(u'/home/tunghsu/workspace/SAMS/media/'+filefield.name)
+    response['Content-Disposition'] = 'attachment; ' + filename_header#用户名带有路径，需要改
         #response['title'] = filefield.name
         #size = '%d' % file.size()
         #response['Content-Length'] = size
         #except DoesNot Exist
         #Raise 404
-        return response
+    return response
         

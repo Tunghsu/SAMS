@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+import settings
 from SAMS.views import login, checkassign, result, admin, check, submit, view, viewAssignment, download, course, classes
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
