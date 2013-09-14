@@ -88,14 +88,21 @@ def admin(request):
         return HttpResponseRedirect('/login/')
     hint = ''
     if 'box' in request.GET:
-        for j in request.GET['box']:
-            classID = Class_Course_Relation.objects.filter(cID = j).clID
+        boxlist = request.GET.getlist('box')
+        for j in boxlist:
+            para = int(j)
+            classID = Class_Course_Relation.objects.filter(cID = para)
             for i in classID:
-                Assignment.objects.filter(clID = i).delete()
-                AssignmentFile.objects.filter(clID = i).delete()
-                Student_Class_Relation.objects.filter(clID = i).delete()
-                Class_Course_Relation.objects.filter(cID = j).delete()
-                Course.objects.filter(cID = j).delete()
+                t = Assignment.objects.filter(clID = i.clID)
+                for k in t:
+                    u = AssignmentFile.objects.filter(asID = k.asID)
+                    for l in u:
+                        default_storage.delete('/home/tunghsu/workspace/SAMS/media/'+str(AssignmentFile.objects.get(asfID=l.asfID).asFile))
+                    AssignmentFile.objects.filter(asID = k.asID).delete()
+                Assignment.objects.filter(clID = i.clID).delete()
+                Student_Class_Relation.objects.filter(clID = i.clID).delete()
+            Class_Course_Relation.objects.filter(cID = j).delete()
+            Course.objects.filter(cID = j).delete()
         hint = 'Course Deleted'
     if 'q' in request.POST:#需要后台检测字符转换数字
         if request.POST['q'] == 'student':
@@ -142,9 +149,16 @@ def course(request, offset):
         return HttpResponseRedirect('/login/')
     hint = ''
     if 'box' in request.GET:
-        for j in request.GET['box']:
-            Assignment.objects.filter(clID = j).delete()
-            AssignmentFile.objects.filter(clID = j).delete()
+        boxlist = request.GET.getlist('box')
+        for j in boxlist:
+            para = int(j)
+            t = Assignment.objects.filter(clID = para)
+            for k in t:
+                u = AssignmentFile.objects.filter(asID = k.asID)
+                for l in u:
+                    default_storage.delete('/home/tunghsu/workspace/SAMS/media/'+str(AssignmentFile.objects.get(asfID=l.asfID).asFile))
+                AssignmentFile.objects.filter(asID = k.asID).delete()
+            Assignment.objects.filter(clID = para).delete()
             Student_Class_Relation.objects.filter(clID = j).delete()
             Class_Course_Relation.objects.filter(clID = j).delete()
         hint = 'Class Deleted'
@@ -164,7 +178,7 @@ def course(request, offset):
         line['viewcourse'] = 'http://localhost:8000/class/'+tmp
         matrix.append(dict(line))
     return  render_to_response('course.html', {'title': courseStr+"课程班级查看页面", 'matrix':matrix, 'hint':hint})
-def classes(request, offset):
+def classes(request, offset):#不删除学生身份，只删除其课程
     try:
         if (not 'uid' in request.session) or (request.session['group']<>'a'):
             return HttpResponseRedirect('/login/')
@@ -172,9 +186,14 @@ def classes(request, offset):
         return HttpResponseRedirect('/login/')
     hint = ''
     if 'box' in request.GET:
-        for j in request.GET['box']:
-            AssignmentFile.objects.filter(sID = j).delete()
-            Student_Class_Relation.objects.filter(sID = j).delete()
+        boxlist = request.GET.getlist('box')
+        for j in boxlist:
+            para = int(j)
+            t = AssignmentFile.objects.filter(sID = para)
+            for k in t:
+                default_storage.delete('/home/tunghsu/workspace/SAMS/media/'+str(AssignmentFile.objects.get(asfID=k.asfID).asFile))
+            AssignmentFile.objects.filter(sID = para).delete()
+            Student_Class_Relation.objects.filter(sID = para).delete()
         hint = 'Student of the class Deleted'
     #try:
     para = int (offset)
@@ -255,19 +274,22 @@ def submit(request):
         return HttpResponseRedirect('/login/')
     hint = ''
     if request.method == 'POST':
-        #asf自更新加一
-        asfID = AssignmentFile.objects.order_by('-asfID')[0].asfID+1
-        asID = request.POST['radio']
-        sID = request.session['uid']
-        sIDStr = '%d' % sID
-        sName = Student.objects.get(sID = sID).sName
-        if AssignmentFile.objects.filter(asID = request.POST['radio'], sID = request.session['uid'])<>[]:
-            default_storage.delete('/home/tunghsu/workspace/SAMS/media/'+str(AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).asFile))
-            AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).delete()
-        request.FILES['File'].name = sIDStr+'_'+sName+'_'+request.FILES['File'].name
-        instance = AssignmentFile(asfID = asfID ,sID = sID, asID = asID, asFile = request.FILES['File'])
-        instance.save()
-        hint = "Upload succeed"
+        if 'File' in request.FILES:
+            #asf自更新加一
+            asfID = AssignmentFile.objects.order_by('-asfID')[0].asfID+1
+            asID = request.POST['radio']
+            sID = request.session['uid']
+            sIDStr = '%d' % sID
+            sName = Student.objects.get(sID = sID).sName
+            if AssignmentFile.objects.filter(asID = request.POST['radio'], sID = request.session['uid'])<>[]:
+                default_storage.delete('/home/tunghsu/workspace/SAMS/media/'+str(AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).asFile))
+                AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).delete()
+                request.FILES['File'].name = sIDStr+'_'+sName+'_'+request.FILES['File'].name
+                instance = AssignmentFile(asfID = asfID ,sID = sID, asID = asID, asFile = request.FILES['File'])
+                instance.save()
+                hint = "Upload succeed"
+        else:
+            hint = "File not selected"
     m = Student_Class_Relation.objects.filter(sID = request.session['uid']).order_by("sClID")
     
     #num = Student_Class_Relation.objects.annotate(number = Count('sClID'))[0].number
@@ -304,7 +326,7 @@ def submit(request):
                                                 #有问题
                         line['expire'] = Assignment.objects.get(asID = line['assignmentNum']).asExpire
                         tmp = '%d' %line['assignmentNum']#格式化字符串,int -> string
-                        line['assignmentDetail'] = 'http://localhost:8000/detail/'+tmp
+                        line['assignmentDetail'] = '../detail/'+tmp
                         found =  AssignmentFile.objects.filter(asID = line['assignmentNum'], sID = request.session['uid'])
                         if found:
                             line['finish'] = "已提交"
@@ -328,6 +350,21 @@ def viewAssignment(request, offset):
         #pass
     txt = Assignment.objects.get(asID = para).asTXT;
     return  render_to_response('blank.html', {'title': "作业详情",'txt':txt})
+def nework(request,offset):#未完成
+    #try:
+    para = int (offset)
+    #except:
+        #URL错误
+        #pass
+    hint=''
+    if request.method=='GET':#实际上有缺陷
+        asID = Assignment.objects.filter(clID=offset).order_by("-asDate")[0].asID+1
+        asTXT = request.GET['txt']
+        instance = Assignment(asID=asID,asTXT=asTXT,clID=para)
+        instance.save()
+        hint=" 添加作业成功"
+    return  render_to_response('blank.html', {'title': "布置作业",'hint':hint})
+        
 def download(request, offset):
     #try:
     para = int (offset)
@@ -417,4 +454,41 @@ def logout(request):
     except:
         pass
     return HttpResponseRedirect('/login/') 
+def search(request):
+    hint = []
+    if 'q' in request.GET:
+        if request.session['uid'] == 's':#查找老师和课程
+            tls = Teacher.objects.filter(tName = request.GET['q'])
+            tnl = Teacher.objects.filter(tName = request.GET['q'])
+            cls = Course.objects.filter(cName = request.GET['q'])
+            cnl = Course.objects.filter(cID = request.GET['q'])
+            tl = {}
+            tm = []
+            cl = {}
+            cm = []
+            if tls:
+                for i in tls:
+                    tl["tID"] = i.tID
+                    tl["teacherName"] = i.tName
+                    tl["teacherAffi"] = i.tAffi
+                    tm.append(dict(tl))
+            if tnl:
+                for i in tnl:
+                    tl["tID"] = i.tID
+                    tl["teacherName"] = i.tName
+                    tl["teacherAffi"] = i.tAffi
+                    tm.append(dict(tl))
+            if cls:
+                for i in cls:
+                    cl["cID"] = i.cID
+                    cl["courseName"] = i.cName
+                    cm.append(dict(tl))
+            if cnl:
+                for i in cnl:
+                    cl["cID"] = i.tID
+                    cl["courseName"] = i.cName
+                    cm.append(dict(tl))
+                        #未完待续，方法雷同
+                    
         
+    return render_to_response('search.html', {'title': "网路搜寻", 'hint':hint})
