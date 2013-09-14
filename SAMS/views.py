@@ -281,13 +281,13 @@ def submit(request):
             sID = request.session['uid']
             sIDStr = '%d' % sID
             sName = Student.objects.get(sID = sID).sName
-            if AssignmentFile.objects.filter(asID = request.POST['radio'], sID = request.session['uid'])<>[]:
+            if AssignmentFile.objects.filter(asID = request.POST['radio'], sID = request.session['uid']):
                 default_storage.delete('/home/tunghsu/workspace/SAMS/media/'+str(AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).asFile))
                 AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).delete()
                 request.FILES['File'].name = sIDStr+'_'+sName+'_'+request.FILES['File'].name
-                instance = AssignmentFile(asfID = asfID ,sID = sID, asID = asID, asFile = request.FILES['File'])
-                instance.save()
-                hint = "Upload succeed"
+            instance = AssignmentFile(asfID = asfID ,sID = sID, asID = asID, asFile = request.FILES['File'])
+            instance.save()
+            hint = "Upload succeed"
         else:
             hint = "File not selected"
     m = Student_Class_Relation.objects.filter(sID = request.session['uid']).order_by("sClID")
