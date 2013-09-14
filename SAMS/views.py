@@ -285,6 +285,7 @@ def submit(request):
     if request.method == 'POST':
         if 'File' in request.FILES:
             #asf自更新加一
+            t = True
             asfID = AssignmentFile.objects.order_by('-asfID')[0].asfID+1
             asID = request.POST['radio']
             sID = request.session['uid']
@@ -293,14 +294,18 @@ def submit(request):
             if AssignmentFile.objects.filter(asID = request.POST['radio'], sID = request.session['uid']):
                 default_storage.delete('/home/tunghsu/workspace/SAMS/media/'+str(AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).asFile))
                 AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).delete()
-                request.FILES['File'].name = sIDStr+'_'+sName+'_'+request.FILES['File'].name
+                t = False
+            request.FILES['File'].name = sIDStr+'_'+sName+'_'+request.FILES['File'].name
             instance = AssignmentFile(asfID = asfID ,sID = sID, asID = asID, asFile = request.FILES['File'])
             instance.save()
+            if t:
+                fn = Assignment.objects.get(asID = asID).asFinishPopu
+                fn +=1
+                Assignment.objects.get(asID = asID).update(asFinishPopu = fn)
             hint = "Upload succeed"
         else:
             hint = "File not selected"
     m = Student_Class_Relation.objects.filter(sID = request.session['uid']).order_by("sClID")
-    
     #num = Student_Class_Relation.objects.annotate(number = Count('sClID'))[0].number
     line = {}
     matrix = []
@@ -475,31 +480,43 @@ def logout(request):
     return HttpResponseRedirect('/login/') 
 def search(request):
     hint = []
+    tl = {}
+    tm = []
+    cl = {}
+    cm = []
+    sl = {}
+    sm = []
+    tnl = []
+    snl = []
+    cnl = []
     if 'q' in request.GET:
+        tag = True
+        try:
+            para = int(request.GET['q'])
+        except:
+            tag=False
         sls = Student.objects.filter(sName = request.GET['q'])
-        snl = Student.objects.filter(sID = request.GET['q'])
+        if tag:
+            snl = Student.objects.filter(sID = request.GET['q'])
         tls = Teacher.objects.filter(tName = request.GET['q'])
-        tnl = Teacher.objects.filter(tID = request.GET['q'])
+        if tag:
+            tnl = Teacher.objects.filter(tID = request.GET['q'])
         cls = Course.objects.filter(cName = request.GET['q'])
-        cnl = Course.objects.filter(cID = request.GET['q'])
-        tl = {}
-        tm = []
-        cl = {}
-        cm = []
-        sl = {}
-        sm = []
+        if tag:
+            cnl = Course.objects.filter(cID = request.GET['q'])
+        
         if request.session['group'] == 's':#查找老师和课程
             if tls:
                 for i in tls:
                     tl["tID"] = i.tID
                     tl["teacherName"] = i.tName
-                    tl["teacherAffi"] = i.tAffi
+                    #tl["teacherAffi"] = i.tAffi
                     tm.append(dict(tl))
             if tnl:
                 for i in tnl:
                     tl["tID"] = i.tID
                     tl["teacherName"] = i.tName
-                    tl["teacherAffi"] = i.tAffi
+                    #tl["teacherAffi"] = i.tAffi
                     tm.append(dict(tl))
             if cls:
                 for i in cls:
@@ -517,13 +534,13 @@ def search(request):
                 for i in sls:
                     sl["sID"] = i.sID
                     sl["studentName"] = i.sName
-                    sl["studentAffi"] = i.sAffi
+                    #sl["studentAffi"] = i.sAffi
                     sm.append(dict(sl))
             if snl:
                 for i in snl:
                     sl['sID'] = i.sID
                     sl["studentName"] = i.sName
-                    sl["studentAffi"] = i.sAffi
+                    #sl["studentAffi"] = i.sAffi
                     sm.append(dict(sl))
             if cls:
                 for i in cls:
@@ -540,13 +557,13 @@ def search(request):
                 for i in sls:
                     sl["sID"] = i.sID
                     sl["studentName"] = i.sName
-                    sl["studentAffi"] = i.sAffi
+                    #sl["studentAffi"] = i.sAffi
                     sm.append(dict(sl))
             if snl:
                 for i in snl:
                     sl['sID'] = i.sID
                     sl["studentName"] = i.sName
-                    sl["studentAffi"] = i.sAffi
+                    #sl["studentAffi"] = i.sAffi
                     sm.append(dict(sl))
             if cls:
                 for i in cls:
@@ -562,13 +579,13 @@ def search(request):
                 for i in tls:
                     tl["tID"] = i.tID
                     tl["teacherName"] = i.tName
-                    tl["teacherAffi"] = i.tAffi
+                    #tl["teacherAffi"] = i.tAffi
                     tm.append(dict(tl))
             if tnl:
                 for i in tnl:
                     tl["tID"] = i.tID
                     tl["teacherName"] = i.tName
-                    tl["teacherAffi"] = i.tAffi
+                    #tl["teacherAffi"] = i.tAffi
                     tm.append(dict(tl))
                     
                     
