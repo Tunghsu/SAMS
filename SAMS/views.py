@@ -240,7 +240,7 @@ def view(request):
         html = t.render(Context({'title':'教师作业批改系统','matrix':matrix}))
     return HttpResponse(html)
 def checkassign(request, offset):
-#教师检查作业
+#教师检查作业,改模式版式
     try:
         if (not 'uid' in request.session) or (request.session['group']<>'t'):
             return HttpResponseRedirect('/login/')
@@ -263,9 +263,18 @@ def checkassign(request, offset):
         line['submitDate'] = i.asfDate
         line['studentName'] = Student.objects.get(sID = i.sID).sName
         assignmentFileNum = '%d' % i.asfID
-        line['downloadLink'] = 'http://localhost:8000/download/'+ assignmentFileNum
+        line['downloadLink'] = '../download/'+ assignmentFileNum
+        line['rate'] = '../rate/'+ assignmentFileNum
         matrix.append(dict(line))
     return render_to_response('checkassign.html', {'title': title, 'matrix':matrix})
+def rate(request):
+    try:
+        if (not 'uid' in request.session) or (request.session['group']<>'t'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+        #未完待续
+    return ''
 def submit(request):
     try:
         if (not 'uid' in request.session) or (request.session['group']<>'s'):
@@ -343,6 +352,11 @@ def submit(request):
     html = t.render(Context({'matrix':matrix, 'title':"作业提交模块", 'hint':hint}))    
     return HttpResponse(html)
 def viewAssignment(request, offset):
+    try:
+        if (not 'uid' in request.session) or (request.session['group']<>'t'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
     #try:
     para = int (offset)
     #except:
@@ -351,6 +365,11 @@ def viewAssignment(request, offset):
     txt = Assignment.objects.get(asID = para).asTXT;
     return  render_to_response('blank.html', {'title': "作业详情",'txt':txt})
 def nework(request,offset):#未完成
+    try:
+        if (not 'uid' in request.session) or (request.session['group']<>'t'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
     #try:
     para = int (offset)
     #except:
@@ -363,7 +382,7 @@ def nework(request,offset):#未完成
         instance = Assignment(asID=asID,asTXT=asTXT,clID=para)
         instance.save()
         hint=" 添加作业成功"
-    return  render_to_response('blank.html', {'title': "布置作业",'hint':hint})
+    return  render_to_response('assign_create.html', {'title': "布置作业",'hint':hint})
         
 def download(request, offset):
     #try:
@@ -457,15 +476,19 @@ def logout(request):
 def search(request):
     hint = []
     if 'q' in request.GET:
-        if request.session['uid'] == 's':#查找老师和课程
-            tls = Teacher.objects.filter(tName = request.GET['q'])
-            tnl = Teacher.objects.filter(tName = request.GET['q'])
-            cls = Course.objects.filter(cName = request.GET['q'])
-            cnl = Course.objects.filter(cID = request.GET['q'])
-            tl = {}
-            tm = []
-            cl = {}
-            cm = []
+        sls = Student.objects.filter(sName = request.GET['q'])
+        snl = Student.objects.filter(sID = request.GET['q'])
+        tls = Teacher.objects.filter(tName = request.GET['q'])
+        tnl = Teacher.objects.filter(tID = request.GET['q'])
+        cls = Course.objects.filter(cName = request.GET['q'])
+        cnl = Course.objects.filter(cID = request.GET['q'])
+        tl = {}
+        tm = []
+        cl = {}
+        cm = []
+        sl = {}
+        sm = []
+        if request.session['group'] == 's':#查找老师和课程
             if tls:
                 for i in tls:
                     tl["tID"] = i.tID
@@ -482,13 +505,73 @@ def search(request):
                 for i in cls:
                     cl["cID"] = i.cID
                     cl["courseName"] = i.cName
-                    cm.append(dict(tl))
+                    cm.append(dict(cl))
             if cnl:
                 for i in cnl:
-                    cl["cID"] = i.tID
+                    cl["cID"] = i.cID
                     cl["courseName"] = i.cName
-                    cm.append(dict(tl))
+                    cm.append(dict(cl))
                         #未完待续，方法雷同
+        if request.session['group'] == 't':
+            if sls:
+                for i in sls:
+                    sl["sID"] = i.sID
+                    sl["studentName"] = i.sName
+                    sl["studentAffi"] = i.sAffi
+                    sm.append(dict(sl))
+            if snl:
+                for i in snl:
+                    sl['sID'] = i.sID
+                    sl["studentName"] = i.sName
+                    sl["studentAffi"] = i.sAffi
+                    sm.append(dict(sl))
+            if cls:
+                for i in cls:
+                    cl["cID"] = i.cID
+                    cl["courseName"] = i.cName
+                    cm.append(dict(cl))
+            if cnl:
+                for i in cnl:
+                    cl["cID"] = i.cID
+                    cl["courseName"] = i.cName
+                    cm.append(dict(cl))
+        if request.session['group'] == 'a':
+            if sls:
+                for i in sls:
+                    sl["sID"] = i.sID
+                    sl["studentName"] = i.sName
+                    sl["studentAffi"] = i.sAffi
+                    sm.append(dict(sl))
+            if snl:
+                for i in snl:
+                    sl['sID'] = i.sID
+                    sl["studentName"] = i.sName
+                    sl["studentAffi"] = i.sAffi
+                    sm.append(dict(sl))
+            if cls:
+                for i in cls:
+                    cl["cID"] = i.cID
+                    cl["courseName"] = i.cName
+                    cm.append(dict(cl))
+            if cnl:
+                for i in cnl:
+                    cl["cID"] = i.cID
+                    cl["courseName"] = i.cName
+                    cm.append(dict(cl))
+            if tls:
+                for i in tls:
+                    tl["tID"] = i.tID
+                    tl["teacherName"] = i.tName
+                    tl["teacherAffi"] = i.tAffi
+                    tm.append(dict(tl))
+            if tnl:
+                for i in tnl:
+                    tl["tID"] = i.tID
+                    tl["teacherName"] = i.tName
+                    tl["teacherAffi"] = i.tAffi
+                    tm.append(dict(tl))
+                    
                     
         
-    return render_to_response('search.html', {'title': "网路搜寻", 'hint':hint})
+    return render_to_response('search.html', {'title': "网路搜寻", 'hint':hint,'sm':sm,'tm':tm,'cm':cm})
+#注册、邀请码

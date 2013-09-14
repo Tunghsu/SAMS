@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     (r'^logout/$', logout),
     (r'^profile/$', profile),
     (r'^add/(\d+)/$', nework),
+    (r'^rate/(\d+)/$', rate),
     # Examples:
     # url(r'^$', 'SAMS.views.home', name='home'),
     # url(r'^SAMS/', include('SAMS.foo.urls')),

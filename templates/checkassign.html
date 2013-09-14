@@ -5,13 +5,15 @@
 		<th>学号</th>
 		<th>姓名</th>
 		<th>提交日期</th>
-		<th>操作</th>
+		<th>评分</th>
+		<th>下载</th>
 	</tr>
 {% for i in matrix %}
 <tr>
   <td>{{ i.studentID }}</td>
   <td>{{ i.studentName }}</td>
   <td>{{ i.submitDate }}</td>
+  <td>{{ i.rate }}</td>
   <td><a href="{{ i.downloadLink }}"><img src="" alt="下载"></a></td>
 </tr>
 {% endfor %}
