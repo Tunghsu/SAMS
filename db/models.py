@@ -58,6 +58,7 @@ class AssignmentFile(models.Model):
 	asFile = models.FileField(upload_to = 'assignment')
 	sID = models.IntegerField()
 	asfDate = models.DateTimeField(auto_now=True)
+	asfRate = models.IntegerField()
 	
 class Notification(models.Model):
 	def __unicode__(self):

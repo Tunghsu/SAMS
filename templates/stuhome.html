@@ -20,7 +20,7 @@
 		<th>是否提交</th>
 	</tr>
 {% for i in matrix %}
-<tr>
+<tr class="active">
   <td><input type="radio" name="radio" {% if forloop.first %}checked="checked"{% endif %}
   value="{{ i.assignmentNum }}" /></td>
   <td>{{ i.classNum }}</td>
@@ -30,7 +30,7 @@
   <td>{{ i.population }}</td>
   <td>{{ i.assignmentNum }}</td>
   <td>{{ i.expire }}</td>
-  <td><a href="{{ i.assignmentDetail }}"><img src="" alt="详细信息"></a></td>
+  <td><a href="{{ i.assignmentDetail }}"><i class="icon-pencil"></i>查看</a></td>
   <td>{{ i.finish }}</td>
 </tr>
 {% endfor %}
