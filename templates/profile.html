@@ -1,0 +1,14 @@
+{% include "header.html" %}
+<body style="margin-top: 50px;">
+<form action="" method="post">
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户ID：<input type="text" class="input-xlarge uneditable-input" placeholder="{{uid}}"> 
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户名：<input type="text" class="input-xlarge" name="user"> 
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E-mail：<input type="text" class="input-xlarge" name="mail"> 
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原密码：<input type="text" class="input-xlarge" name="oldpasswd"> 
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;新密码：<input type="text" class="input-xlarge" name="passwd"> 
+		<p>重复新密码：<input type="text" class="input-xlarge" name="passwd2"> 
+    <button type="submit" class="button glow button-rounded button-flat-primary">提交</button>
+  </div>
+    </form>
+</body>
+{% include "footer.html" %}

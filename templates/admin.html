@@ -1,15 +1,20 @@
 {% include "header.html" %}
 <body style="margin-top: 50px;">
- <div class="container-fluid">
+<h3>系统管理页面</h3>
+ <div class="container-fluid" style="display:none;">
 	<div class="row-fluid">
 		<div class="span12">
 			<div class="row-fluid">
 				<div class="span3">
 				</div>
 				<div class="span6">
-				{% if hint %}
- <h3>{{ hint }} </h3>
- {% endif %}
+				  	{% if hint %}<div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+
+ <h4>{{ hint }} </h4>
+
+</div> {% endif %}
+			
 				</div>
 				<div class="span3">
 				</div>
@@ -18,13 +23,86 @@
 	</div>
 </div>
  
+ <div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">用户信息</a></li>
+    <li><a href="#tab2" data-toggle="tab">课程信息</a></li>
+	<li><a href="#tab3" data-toggle="tab">班级信息</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+      <p><form name="input" action="" method="get">
+
+<table class="table table-hover table-condensed">
+	<tr>
+		<th>选择</th>
+		<th>学生编号</th>
+		<th>学生姓名</th>
+	</tr>
+{% for i in matrix %}
+<tr>
+  <td><input type="checkbox" name="box" value="{{ i.studentID }}" /></td>
+  <td>{{ i.studentID }}</td>
+  <td>{{ i.studentName }}</td>
+</tr>
+{% endfor %}
+</table>
+<button type="submit" class="button glow button-rounded button-flat-caution">删除</button>
+</form></p>
+    </div>
+    <div class="tab-pane" id="tab2">
+      <p> <form name="input" action="" method="get"><table class="table table-hover table-condensed">
+	<tr>
+		<th>选择</th>
+		<th>课程序号</th>
+		<th>课程名称</th>
+		<th>查看</th>
+	</tr>
+
+	{% for i in matrix %}	
+	<tr>
+		<td><input type="checkbox" name="box" value ="{{ i.courseID }}" > </td>
+		<td>{{ i.courseID }}</td>
+		<td>{{ i.courseName }}</td>
+		<td><a href="{{ i.viewcourse }}"><img src="" alt="详细信息"></td>
+	</tr>
+{% endfor %}
+</table>
+<button type="submit" class="button glow button-rounded button-flat-caution">删除</button>
+</form></p>
+    </div>
+	<div class="tab-pane" id="tab3">
+      <p><form name="input" action="" method="get">
+
+<table class="table table-hover table-condensed">
+	<tr>
+		<th>选择</th>
+		<th>班级编号</th>
+		<th>教师姓名</th>
+		<th>查看</th>
+	</tr>
+{% for i in matrix %}
+<tr>
+  <td><input type="checkbox" name="box" value="{{ i.classID }}" /></td>
+  <td>{{ i.classID }}</td>
+  <td>{{ i.teacher }}</td>
+  <td><a href="{{ i.viewcourse }}"><img src="" alt="详细信息"></a></td>
+</tr>
+{% endfor %}
+</table>
+<button type="submit" class="button glow button-rounded button-flat-caution">删除</button>
+</form></p>
+    </div>
+  </div>
+</div>
+
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span12">
 			<div class="row-fluid">
-				<div class="span3">
+				<div class="span4">
 				</div>
-				<div class="span3">
+				<div class="span4">
 				<!-- Button to trigger modal -->
 <a href="#myModal" role="button" class="button glow button-rounded button-flat-primary btn-block" data-toggle="modal">添加</a>
  
@@ -104,47 +182,7 @@ margin-left: -200px;">
   
 </div>
 				</div>
-				<div class="span3">
-				
-<!-- Button to trigger modal -->
-<a href="#myModal1" role="button" class="button glow button-rounded button-flat-caution btn-block" data-toggle="modal">删除</a>
- 
-<!-- Modal -->
-<div id="myModal1" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">删除课程</h3>
-  </div>
-  <div class="modal-body">
-    <p><table class="table table-hover table-condensed">
-	<tr>
-		<th>选择</th>
-		<th>课程序号</th>
-		<th>课程名称</th>
-		<th>查看</th>
-	</tr>
-<form>
-	{% for i in matrix %}	
-	<tr>
-		<td><input type="checkbox" name="box" value ="{{ i.courseID }}" > </td>
-		<td>{{ i.courseID }}</td>
-		<td>{{ i.courseName }}</td>
-		<td><a href="{{ i.viewcourse }}"><img src="" alt="详细信息"></td>
-	</tr>
-{% endfor %}
-</table>
-<div class="modal-footer" style="background-color:#fff">
-    <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
-    <button type="submit" action="" class="button glow button-rounded button-flat-caution">删除</button>
-  </div>
-</form>
-</body></p>
-  </div>
-  
-</div>
-
-				</div>
-				<div class="span3">
+				<div class="span4">
 				</div>
 			</div>
 		</div>

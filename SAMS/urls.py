@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 import settings
-from SAMS.views import nework, profile, login, logout, checkassign, result, admin, check, submit, view, viewAssignment, download, course, classes
+from SAMS.views import nework, profile, login, logout, checkassign, result, admin, check, submit, view, viewAssignment, download, course, classes,rate
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
