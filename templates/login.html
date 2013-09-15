@@ -29,9 +29,21 @@
       }
 
     </style>
-    
-<body style="margin-top: 50px;">
-    {% if errors %}
+    <div class="container-fluid">
+	<div class="row-fluid" style="
+    max-height: 55px;
+">
+		<div class="span12" style="
+    max-height: 55px;
+">
+			<div class="row-fluid">
+				<div class="span4">
+				</div>
+				<div class="span4">
+				 {% if errors %}  
+  <div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+
     <h4>
 	{% for error in errors %}
         <li>{{ error }}</li>
@@ -40,23 +52,35 @@
     {% else %}
 	{% if submit %}
 	<h4><li>Your input is valid</li><h4>
+	 
+</div>
 	{% endif %}
     {% endif %}
+				</div>
+				<div class="span4">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<body style="margin-top: 50px;">
+
 	
     <div class="container">
       <form class="form-signin" method="POST">
+	  
 	  <h2 class="form-signin-heading" align="center">学生作业管理系统</h2>
         <input type="text" class="input-block-level" placeholder="请输入你的用户名"  name="user">
         <input type="password" class="input-block-level" placeholder="密码" name="passwd">
-		  <label class="radio inline" >
+		<label class="radio inline" >
 <input type="radio" name="role" checked="checked" value="student">
 学生
 </label>
-<label class="radio inline">
+&nbsp;<label class="radio inline">
 <input type="radio" name="role" value="teacher">
 教师
 </label>
-<label class="radio inline">
+&nbsp;<label class="radio inline">
 <input type="radio" name="role" value="administrator">
 管理员
 </label>
