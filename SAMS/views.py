@@ -252,6 +252,13 @@ def checkassign(request, offset):
     except:
         #URL错误
         pass
+    hint = []
+    if 'comment' in request.POST:
+        AssignmentFile.objects.get(asfID = assignmentNum).update(asfComment = request.POST['comment'])
+        hint.append('Commment added')
+    if 'mark' in request.POST:
+        AssignmentFile.objects.get(asfID = assignmentNum).update(asfMark = request.POST['mark'])
+        hint.append('Mark added')
     classNum = Assignment.objects.get(asID = assignmentNum).clID
     title = '%d' % classNum
     assignstr = '%d' % assignmentNum
@@ -265,9 +272,10 @@ def checkassign(request, offset):
         line['studentName'] = Student.objects.get(sID = i.sID).sName
         assignmentFileNum = '%d' % i.asfID
         line['downloadLink'] = 'http://localhost:8000/download/'+ assignmentFileNum
+        line['asfID'] =  assignmentFileNum
         line['rate'] = '../rate/'+ assignmentFileNum
         matrix.append(dict(line))
-    return render_to_response('checkassign.html', {'title': title, 'matrix':matrix})
+    return render_to_response('checkassign.html', {'title': title, 'matrix':matrix, 'hint':hint})
 def rate(request, offset):
     try:
         if (not 'uid' in request.session) or (request.session['group']!='t'):
