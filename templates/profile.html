@@ -1,0 +1,17 @@
+{% include "header.html" %}
+<body>
+{% if hint %}
+{% for i in hint %}
+<h3>{{ i }}</h3>
+{% endfor %}
+{% endif %}
+ <form action="" method="post">
+        <p>用户姓名：<input type="text" name="user">
+        <p>Email：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="mail">
+        <p>新密码：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="password" name="passwd">
+        <p>重新输入新密码：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="password" name="passwd2">
+        <p>当前密码：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="password" name="oldpasswd">
+        <p><input type="submit" class="btn btn-primary" value="确定">
+    </form>
+</body>
+{% include "footer.html" %}
