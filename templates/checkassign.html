@@ -2,21 +2,22 @@
 <body style="margin-top: 50px;">
 			<table class="table table-hover table-condensed">
 	<tr>
+		<th>作业编号</th>
 		<th>学号</th>
 		<th>姓名</th>
 		<th>提交日期</th>
-		<th>评分</th>
 		<th>下载</th>
 	</tr>
 {% for i in matrix %}
 <tr>
+  <td>{{ i.asfID }}</td>
   <td>{{ i.studentID }}</td>
   <td>{{ i.studentName }}</td>
   <td>{{ i.submitDate }}</td>
   <td><form action="" method="post">
         <p>分数：<input type="text" name="mark">
         <p>评语：<textarea rows="5" style="display:inline;" placeholder="请在此输入对这份作业评语" name="comment"></textarea>
-		<p><input type="text" style="display:none;" name="asfID" value="{{ i.classNum }}">
+		<p><input type="text" style="display:none;" name="asfID" value="{{ i.asfID }}">
 		<div class="modal-footer" style="background-color:#fff">
     <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
     <button type="submit" class="button glow button-rounded button-flat-primary">提交</button>
