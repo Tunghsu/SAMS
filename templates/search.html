@@ -1,0 +1,62 @@
+{% include "header.html" %}
+<body style="margin-top: 50px;">
+
+{% if sm %}
+<h3>学生信息</h3>
+<table class="table table-hover table-condensed">
+<tr>
+		<th>学号</th>
+		<th>姓名</th>
+		<!--<th>院系</th>-->
+</tr>
+{% for i in sm %}
+<tr>
+<td>{{ i.sID }}</td>
+<td>{{ i.studentName }}</td>
+<!--<td>{{ i.studentAffi }}</td>-->
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% if tm %}
+<h3>教师信息</h3>
+<table class="table table-hover table-condensed">
+<tr>
+		<th>工号</th>
+		<th>姓名</th>
+		<!--<th>院系</th>-->
+</tr>
+{% for i in tm %}
+<tr>
+<td>{{ i.tID }}</td>
+<td>{{ i.teacherName }}</td>
+<!--<td>{{ i.teacherAffi }}</td>-->
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+
+{% if cm %}
+<h3>课程信息</h3>
+<table class="table table-hover table-condensed">
+<tr>
+		<th>课程编号</th>
+		<th>课程名</th>
+</tr>
+{% for i in cm %}
+<tr>c
+<td>{{ i.cID }}</td>
+<td>{{ i.courseName }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+{% if sm or tm or cm %}
+{% else %}
+<h3>Nothing to display here</h3>
+{% endif %}
+
+</body>
+{% include "footer.html" %}

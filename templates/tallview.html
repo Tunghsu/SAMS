@@ -1,0 +1,32 @@
+{% include "header.html" %}
+<body style="margin-top: 50px;">
+<h3>{{ title }}</h3>
+			<table class="table table-hover table-condensed">
+	<tr>
+		<th>课程名</th>
+		<th>班级编号</th>
+		<th>班级人数</th>
+		<th>作业序号</th>
+		<th>布置时间</th>
+		<th>过期时间</th>
+		<th>作业详情</th>
+	</tr>
+{% for i in matrix %}
+<tr>
+  <td>{{ i.courseName }}</td>
+  <td>{{ i.classNum }}</td>
+  <td>{{ i.population }}</td>
+  <td>{{ i.times }}</td>
+  <td>{{ i.asDate }}</td>
+  <td>{{ i.asExpire }}</td>
+  <td><a href="{{ i.viewassignment }}"><i class="icon-pencil"></i>查看</a></td>
+   
+   <!-- <td><a href="#mypopover" class="icon-pencil" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." title="" data-original-title="Popover on top">评分</a>
+  <div id="mypopover" class="popover fade top in" style="top: -58px; left: 58.5px; display: block; "><div class="arrow"></div><div class="popover-content"><input type="text" class="input-block-level" placeholder="请输入分数或等级"  name="rate"> <button class="button glow button-rounded button-flat-primary" type="submit" action="">提交</button></div></div></td> -->
+  <!-- <td>{{ i.rate }}</td> -->
+</tr>
+{% endfor %}
+</table>
+
+</body>
+{% include "footer.html" %}
