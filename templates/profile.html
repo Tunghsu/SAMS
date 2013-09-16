@@ -1,14 +1,104 @@
 {% include "header.html" %}
 <body style="margin-top: 50px;">
-<form action="" method="post">
-        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户ID：<input type="text" class="input-xlarge uneditable-input" placeholder="{{uid}}"> 
-        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户名：<input type="text" class="input-xlarge" name="user"> 
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E-mail：<input type="text" class="input-xlarge" name="mail"> 
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原密码：<input type="text" class="input-xlarge" name="oldpasswd"> 
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;新密码：<input type="text" class="input-xlarge" name="passwd"> 
-		<p>重复新密码：<input type="text" class="input-xlarge" name="passwd2"> 
-    <button type="submit" class="button glow button-rounded button-flat-primary">提交</button>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid">
+				<div class="span4">
+				</div>
+				<div class="span6">
+				<!-- <h3>{{ title }}</h3> -->
+{% if hint %}
+{% for hints in hint %}
+<div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+
+ <h4>{{ hint }} </h4>
+
+</div>{% endfor %} 
+{% endif %}
+				</div>
+				<div class="span2">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid">
+				<div class="span1">
+				</div>
+				<div class="span8">
+				
+				<form class="form-horizontal" method="POST">
+ <div class="control-group">
+    <label class="control-label" for="inputID">用户ID：</label>
+    <div class="controls">
+      <input type="text" id="inputID"  class="uneditable-input input-block-level" placeholder="{{uid}}">
+    </div>
   </div>
-    </form>
+   <div class="control-group">
+    <label class="control-label" for="inputName">用户名：</label>
+    <div class="controls">
+      <input type="text" id="inputName" class="input-block-level" name="user">
+    </div>
+  </div>
+   <div class="control-group">
+    <label class="control-label" for="inputEmail">E-mail：</label>
+    <div class="controls">
+      <input type="email" id="inputEmail" class="input-block-level" name="mail">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputpassword">新密码：</label>
+    <div class="controls">
+      <input type="password" id="inputpassword" class="input-block-level" name="passwd">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputPassword2">重复新密码：</label>
+    <div class="controls">
+      <input type="password" id="inputPassword2" class="input-block-level" name="passwd2">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputoldpasswd">原密码：</label>
+    <div class="controls">
+      <input type="password" id="inputoldpasswd" class="input-block-level" name="oldpasswd" required>
+    </div>
+  </div>
+    <div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid">
+				<div class="span1">
+				</div>
+				<div class="span10">
+				 <div class="control-group">
+    <div class="controls">
+      <input type="submit" class="button glow button-rounded button-flat-primary btn-block">
+    </div>
+  </div>
+				</div>
+				<div class="span1">
+				</div>
+			</div>
+		</div>
+	</div>
+</div> 
+</form>
+				</div>
+				<div class="span2">
+				
+				</div>
+				<div class="span1">
+				</div>
+			</div>
+		</div>
+	</div>
+
+
 </body>
 {% include "footer.html" %}

@@ -10,7 +10,7 @@
 </div> {% endif %}
 <table class="table table-hover table-condensed">
 	<tr>
-		<th>序号</th>
+		<th>班级序号</th>
 		<th>课程名</th>
 		<th>课程号</th>
 		<th>课程人数</th>
@@ -57,7 +57,7 @@
   </div>
   <div class="modal-body">
     <p> <form action="" method="post">
-        <p>截止时间：将在<input type="text" class="input-small" style="display:inline;" placeholder="Day" name="day">天<input type="text" class="input-small" style="display:inline;" placeholder="Hour" name="day">小时后停止接收作业
+        <p>截止时间：将在<input type="text" class="input-small input-block-level" style="display:inline;" placeholder="Day" name="day" required>天<input type="text" class="input-small input-block-level" style="display:inline;" placeholder="Hour" name="day" required>小时后停止接收作业
 		<p><input type="text" style="display:none;" name="classNum" value="{{ i.classNum }}">
         <p>详细要求：<textarea rows="5" style="display:inline;" placeholder="请在此输入作业的详细要求如：文件标题及格式规范等" name="txt"></textarea>
 		<div class="modal-footer" style="background-color:#fff">

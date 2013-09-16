@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 import settings
-from SAMS.views import allview, nework, profile, login, logout, checkassign, result, admin, check, submit, view, viewAssignment, download, course, classes,rate,search
+from SAMS.views import root, tallview, allview, nework, profile, login, logout, checkassign, result, admin, check, submit, view, viewAssignment, download, course, classes,rate,search
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -23,7 +23,9 @@ urlpatterns = patterns('',
     (r'^add/(\d+)/$', nework),
     (r'^rate/(\d+)/$', rate),
     (r'^search/$', search),
-    (r'^allview/(\d+)/$', allview),
+    (r'^allview/$', allview),
+    (r'^tallview/$', tallview),
+    (r'^$', root),
     # Examples:
     # url(r'^$', 'SAMS.views.home', name='home'),
     # url(r'^SAMS/', include('SAMS.foo.urls')),

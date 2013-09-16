@@ -9,7 +9,18 @@ from django.shortcuts import render_to_response
 from django.core.servers.basehttp import FileWrapper
 import os, mimetypes
 from django.core.files.storage import default_storage
-
+def root(request):
+    try:
+        if (not 'uid' in request.session):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+    if request.session['group']=='a':
+        return HttpResponseRedirect('/admin/')
+    if request.session['group']=='t':
+        return HttpResponseRedirect('/view/')
+    if request.session['group']=='s':
+        return HttpResponseRedirect('/submit/')
 def login(request):
     error = []
     submit = False #Ture和False不要加引号！！！！！
@@ -22,7 +33,7 @@ def login(request):
                 try:
                     userint = int(user)#只允许输入数字作为用户名
                 except ValueError:
-                    error.append("Your username is not in the correct format")
+                    error.append("请使用编号作为用户名")
                 else:
                     try:
                         r = Student.objects.get(sID = userint)
@@ -32,15 +43,15 @@ def login(request):
                             if not 'box' in request.POST:
                                 request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
                         else:
-                            error.append("Your username and password didn't match.") 
+                            error.append("用户名密码组合无效") 
                     except Student.DoesNotExist:
-                        error.append("Your username and password didn't match.")
+                        error.append("用户名密码组合无效")
             
             if request.POST.get('role','') == 'administrator':
                 try:
                     userint = int(user)
                 except ValueError:
-                    error.append("Your username is not in the correct format")
+                    error.append("请使用编号作为用户名")
                 else:
                     try:
                         r = Administrator.objects.get(aID = userint)
@@ -50,9 +61,9 @@ def login(request):
                             if not 'box' in request.POST:
                                 request.session.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
                         else:
-                            error.append("Your username and password didn't match.") 
+                            error.append("用户名密码组合无效") 
                     except Administrator.DoesNotExist:
-                        error.append("Your username and password didn't match.") 
+                        error.append("用户名密码组合无效") 
             if request.POST.get('role','') == 'teacher':
                 try:
                     userint = int(user)
@@ -72,9 +83,14 @@ def login(request):
                     except Teacher.DoesNotExist:
                         error.append("Your username and password didn't match.") 
             if not error:
-                return HttpResponseRedirect('/result/')
+                if request.session['group'] == 's':
+                    return HttpResponseRedirect('/submit/')
+                if request.session['group'] == 't':
+                    return HttpResponseRedirect('/view/')
+                if request.session['group'] == 'a':
+                    return HttpResponseRedirect('/admin/')
         else:
-            error.append("Username or Password is blank!")
+            error.append("用户名密码组合无效")
 
     t = get_template('login.html')
     html = t.render(Context({"errors":error,"submit":submit,"title":"学生作业管理系统"}))
@@ -139,7 +155,7 @@ def admin(request):
         line['courseName'] = i.cName
         line['courseID'] = i.cID
         tmp ='%d' % i.cID
-        line['viewcourse'] = '../course/'+tmp
+        line['viewcourse'] = 'http://localhost:8000/download/course/'+tmp
         matrix.append(dict(line))    
     return  render_to_response('admin.html', {'title': "管理页面",  'hint':hint, 'matrix':matrix})
 def course(request, offset):
@@ -234,6 +250,8 @@ def view(request):
             line['finishPopu'] = Assignment.objects.get(asID = line['assignmentNum']).asFinishPopu
             line['assignmentAmount'] = Assignment.objects.filter(clID = i.clID).annotate(number = Count('clID'))[0].number
             tmp = '%d' % line['assignmentNum']#格式化字符串,int -> string
+            txt = Assignment.objects.get(asID = line['assignmentNum']).asTXT
+            line['txt'] = txt
             line['assignmentDetail'] = 'http://localhost:8000/detail/'+tmp
             line['viewassignment'] = 'http://localhost:8000/checkassign/'+tmp
             matrix.append(dict(line))
@@ -254,10 +272,16 @@ def checkassign(request, offset):
         pass
     hint = []
     if 'comment' in request.POST:
-        AssignmentFile.objects.get(asfID = assignmentNum).update(asfComment = request.POST['comment'])
+        asf = int (request.POST['asfID'])
+        p = AssignmentFile.objects.get(asfID=asf)
+        p.asfComment= request.POST['comment']
+        p.save()
         hint.append('Commment added')
     if 'mark' in request.POST:
-        AssignmentFile.objects.get(asfID = assignmentNum).update(asfMark = request.POST['mark'])
+        asf = int (request.POST['asfID'])
+        p = AssignmentFile.objects.get(asfID=asf)
+        p.asfMark= request.POST['mark']
+        p.save()
         hint.append('Mark added')
     classNum = Assignment.objects.get(asID = assignmentNum).clID
     title = '%d' % classNum
@@ -273,7 +297,7 @@ def checkassign(request, offset):
         assignmentFileNum = '%d' % i.asfID
         line['downloadLink'] = 'http://localhost:8000/download/'+ assignmentFileNum
         line['asfID'] =  assignmentFileNum
-        line['rate'] = '../rate/'+ assignmentFileNum
+        line['rate'] = 'http://localhost:8000/download/rate/'+ assignmentFileNum
         matrix.append(dict(line))
     return render_to_response('checkassign.html', {'title': title, 'matrix':matrix, 'hint':hint})
 def rate(request, offset):
@@ -286,10 +310,10 @@ def rate(request, offset):
     hint = []
         #The name of input field s are comment and  mark
     if 'comment' in request.GET:
-            AssignmentFile.objects.get(asfID = para).update(asfComment = request.GET['comment'])
+            AssignmentFile.objects.get(asfID = para).asfComment = request.GET['comment']
             hint.append('Commment added')
     if 'mark' in request.GET:
-            AssignmentFile.objects.get(asfID = para).update(asfMark = request.GET['mark'])
+            AssignmentFile.objects.get(asfID = para).asfMark = request.GET['mark']
             hint.append('Mark added')
         #未完待续
     return ''
@@ -323,7 +347,7 @@ def submit(request):
                 if t:
                     fn = Assignment.objects.get(asID = asID).asFinishPopu
                     fn +=1
-                    Assignment.objects.get(asID = asID).update(asFinishPopu = fn)
+                    Assignment.objects.get(asID = asID).asFinishPopu = fn
                 hint = "Upload succeed"
         else:
             hint = "File not selected"
@@ -361,8 +385,8 @@ def submit(request):
                         line['assignmentNum'] = Assignment.objects.filter(clID = line['classNum']).order_by("-asDate")[0].asID
                                                 #有问题
                         line['expire'] = Assignment.objects.get(asID = line['assignmentNum']).asExpire
-                        tmp = '%d' %line['assignmentNum']#格式化字符串,int -> string
-                        line['assignmentDetail'] = '../detail/'+tmp
+                        txt = Assignment.objects.get(asID = line['assignmentNum']).asTXT
+                        line['txt'] = txt
                         found =  AssignmentFile.objects.filter(asID = line['assignmentNum'], sID = request.session['uid'])
                         if found:
                             line['comment'] = found[0].asfComment
@@ -372,7 +396,9 @@ def submit(request):
                             line['comment']=''
                             line['mark'] = ''
                             line['finish'] = "尚未提交"
-                            if line['expire']<datetime.datetime.now():
+                                                        #有Bug
+                            td = datetime.datetime.now()-Assignment.objects.get(asID = line['assignmentNum']).asExpire
+                            if td.total_seconds()>0:
                                 line['finish']="Expired"
                 except:
                     pass
@@ -395,7 +421,7 @@ def viewAssignment(request, offset):
     #except:
         #URL错误
         #pass
-    txt = Assignment.objects.get(asID = para).asTXT;
+    txt = Assignment.objects.get(asID = para).asTXT
     return  render_to_response('blank.html', {'title': "作业详情",'txt':txt})
 def nework(request,offset):#未完成
     try:
@@ -416,9 +442,10 @@ def nework(request,offset):#未完成
         hour = request.GET['hour']
         day = request.GET['day']
         end = now + datetime.timedelta(hours=hour)
-        end += datetime.datedelta(days=day)
+        end += datetime.timedelta(days=day)
         asExpire = end
-        instance = Assignment(asID=asID, asTXT= asTXT,clID= para, asExpire=asExpire)
+        acID = Assignment.objects.filter(clID = para).annotate(number = Count('asClID'))[0].number+1
+        instance = Assignment(asID=asID, asTXT= asTXT,clID= para, asExpire=asExpire,asClID = acID)
         instance.save()
         hint=" 添加作业成功"
     return  render_to_response('assign_create.html', {'title': "布置作业",'hint':hint})
@@ -436,7 +463,7 @@ def download(request, offset):
         #404
     if request.session['group'] =='s':
         num = AssignmentFile.objects.get(asfID = para).sID
-        if sID != request.session['uid']:
+        if num != request.session['uid']:
             return HttpResponseRedirect('/login/')
     #try:
     filefield = AssignmentFile.objects.get(asfID = para).asFile
@@ -635,6 +662,56 @@ def search(request):
                     
     return render_to_response('search.html', {'title': "网路搜寻", 'hint':hint,'sm':sm,'tm':tm,'cm':cm})
 #注册、邀请码
-def allview(request, offset):#for students to view  assignments they submitted
-    return ''
+def allview(request):#for students to view  assignments they submitted
+    try:
+        if (not 'uid' in request.session) or (request.session['group']!='s'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+    m =  Student_Class_Relation.objects.filter(sID = request.session['uid'])
+    matrix = []
+    line = {}
+    for i in m :#class in course
+        n = Assignment.objects.filter(clID = i.clID)
+        course = Class_Course_Relation.objects.get(clID = i.clID)
+        o = Course.objects.get(cID = course.cID).cName
+        teacher = Teacher.objects.get(tID=course.tID).tName
+        for j in n:#Every assignmentFile in the class in different times, J is a line of Assignment
+            line['clID'] = i.clID
+            line['courseName'] = o
+            line['teacher'] = teacher
+            line['times'] = Assignment.objects.get(asID = j.asID).asClID
+            try:
+                asf = AssignmentFile.objects.get(asID = j.asID)
+                line['comment'] = asf.asfComment
+                line['mark'] = asf.asfMark
+                asfstr = '%d' % asf.asfID
+                line['downloadLink'] = 'http://localhost:8000/download/'+ asfstr
+            except:
+                line['mark'] = "未提交"
+            matrix.append(dict(line))        
+    return render_to_response('allview.html', {'title': "历史记录", 'matrix':matrix})
+def tallview(request):
+    try:
+        if (not 'uid' in request.session) or (request.session['group']!='t'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
+    m = Class_Course_Relation.objects.filter(tID = request.session['uid'])
+    matrix = []
+    line = {}
+    for i in m:#every class  in Course
+        line['courseName'] = Course.objects.get(cID = i.cID).cName
+        line['classNum'] = i.clID
+        line['population'] = i.cPopu
+        n = Assignment.objects.filter(clID = i.clID)
+        for j in n:#Every assignment in the class
+            line['times'] = j.asClID
+            line['asNum'] = j.asID
+            line['asDate'] = j.asDate
+            line['asExpire'] = j.asExpire
+            tmp = '%d' % j.asID
+            line['viewassignment'] = 'http://localhost:8000/checkassign/'+tmp
+            matrix.append(dict(line))
+    return render_to_response('tallview.html', {'title': "课程历史记录", 'matrix':matrix})
 

@@ -1,5 +1,6 @@
 {% include "header.html" %}
 <body style="margin-top: 50px;">
+<h3>{{ title }}</h3>
 {% if hint %}
 {% for hints in hint %}
 <div class="alert">
@@ -16,6 +17,7 @@
 		<th>姓名</th>
 		<th>提交日期</th>
 		<th>下载</th>
+		<th>评分</th>
 	</tr>
 {% for i in matrix %}
 <tr>
@@ -23,19 +25,32 @@
   <td>{{ i.studentID }}</td>
   <td>{{ i.studentName }}</td>
   <td>{{ i.submitDate }}</td>
-  <td><form action="" method="post">
-        <p>分数：<input type="text" name="mark">
-        <p>评语：<textarea rows="5" style="display:inline;" placeholder="请在此输入对这份作业评语" name="comment"></textarea>
-		<p><input type="text" style="display:none;" name="asfID" value="{{ i.asfID }}">
+  <td><a href="{{ i.downloadLink }}"><img src="" alt="下载"></a></td>
+   <td><!-- Button to trigger modal -->
+<a href="#myModaladd{{ i.classNum }}" role="button" class="icon-pencil" data-toggle="modal">添加</a>
+ 
+<!-- Modal -->
+<div id="myModaladd{{ i.classNum }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">批改课程作业</h3>
+  </div>
+  <div class="modal-body">
+    <p><form action="" method="post">
+    <p>分数：<input type="text" class="input-xlarge input-block-level" name="mark">
+    <p>评语：<textarea rows="7" cols="7" style="display:inline;width: 270px;" placeholder="请在此输入对这份作业评语" name="comment"></textarea>
+	<p><input type="text" style="display:none;" name="asfID" value="{{ i.asfID }}">
 		<div class="modal-footer" style="background-color:#fff">
     <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
     <button type="submit" class="button glow button-rounded button-flat-primary">提交</button>
   </div>
-    </form></td>
+    </form>
+    </p>
+  </div>
+</div></td>
    <!-- <td><a href="#mypopover" class="icon-pencil" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." title="" data-original-title="Popover on top">评分</a>
   <div id="mypopover" class="popover fade top in" style="top: -58px; left: 58.5px; display: block; "><div class="arrow"></div><div class="popover-content"><input type="text" class="input-block-level" placeholder="请输入分数或等级"  name="rate"> <button class="button glow button-rounded button-flat-primary" type="submit" action="">提交</button></div></div></td> -->
   <!-- <td>{{ i.rate }}</td> -->
-  <td><a href="{{ i.downloadLink }}"><img src="" alt="下载"></a></td>
 </tr>
 {% endfor %}
 </table>
