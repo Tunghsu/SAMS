@@ -105,7 +105,7 @@
 				</div>
 				<div class="span4">
 				<!-- Button to trigger modal -->
-<a href="#myModal" role="button" class="button glow button-rounded button-flat-primary btn-block" data-toggle="modal">添加</a>
+				<a href="#myModal" role="button" class="button glow button-rounded button-flat-primary btn-block" data-toggle="modal">添加</a>
  
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 410px;
@@ -114,18 +114,18 @@ margin-left: -200px;">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
    <div class="tabbable"> <!-- Only required for left/right tabs -->
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#tab1" data-toggle="tab">添加用户</a></li>
-    <li><a href="#tab2" data-toggle="tab">添加课程</a></li>
-	<li><a href="#tab3" data-toggle="tab">添加班级</a></li>
-	<li><a href="#tab4" data-toggle="tab">添加课程学生</a></li>
+    <li class="active"><a href="#tab01" data-toggle="tab">添加用户</a></li>
+    <li><a href="#tab02" data-toggle="tab">添加课程</a></li>
+	<li><a href="#tab03" data-toggle="tab">添加班级</a></li>
+	<li><a href="#tab04" data-toggle="tab">添加课程学生</a></li>
   </ul>
   <div class="tab-content">
-    <div class="tab-pane active" id="tab1">
+    <div class="tab-pane active" id="tab01">
       <p><form action="" method="post">
-        <p>用户名：<input type="text" name="uid">
-        <p>&nbsp;&nbsp;&nbsp;密码：<input  type="password" name="passwd">
-		<p>&nbsp;&nbsp;&nbsp;姓名：<input  type="text" name="name">
-		<p>&nbsp;&nbsp;&nbsp;邮箱：<input  type="text" name="mail">
+        <p>用户名：<input type="text" name="uid" required>
+        <p>&nbsp;&nbsp;&nbsp;密码：<input  type="password" name="passwd" required>
+		<p>&nbsp;&nbsp;&nbsp;姓名：<input  type="text" name="name" required>
+		<p>&nbsp;&nbsp;&nbsp;邮箱：<input  type="email" name="mail" required>
         <p>&nbsp;&nbsp;&nbsp;<label class="radio inline"><input type="radio" name="q" checked="checked" value="student">
 学生
 </label>
@@ -143,34 +143,34 @@ margin-left: -200px;">
   </div>
     </form></p>
     </div>
-    <div class="tab-pane" id="tab2">
+    <div class="tab-pane" id="tab02">
       <p>
 	 <form action="" method="post">
-        <p>课程号：<input type="text" name="id">
-        <p>课程名：<input type="text" name="name">
+        <p>课程号：<input type="text" name="id" required>
+        <p>课程名：<input type="text" name="name" required>
 		<div class="modal-footer" style="background-color:#fff">
     <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
     <button type="submit" class="button glow button-rounded button-flat-primary">添加</button>
   </div>
     </form></p>
     </div>
-	 <div class="tab-pane" id="tab3">
+	 <div class="tab-pane" id="tab03">
       <p> <form action="" method="post">
-        <p>&nbsp;&nbsp;&nbsp;&nbsp;班级号：<input type="text" name="classID"> 
-        <p>&nbsp;&nbsp;&nbsp;&nbsp;课程号：<input type="text" name="courseID"> 
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;教师号：<input type="text" name="teacher"> 
-		<p>课程人数：<input type="text" name="amount"> 
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;班级号：<input type="text" name="classID" required> 
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;课程号：<input type="text" name="courseID" required> 
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;教师号：<input type="text" name="teacher" required> 
+		<p>课程人数：<input type="text" name="amount" required> 
 		<div class="modal-footer" style="background-color:#fff">
     <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
     <button type="submit" class="button glow button-rounded button-flat-primary">添加</button>
   </div>
     </form></p>
     </div>
-	 <div class="tab-pane" id="tab4">
+	 <div class="tab-pane" id="tab04">
       <p>
 	<form action="" method="post">
-        <p>用户名：<input type="text" name="uid"> 
-		<p>课程名：<input type="text" name="className"> 
+        <p>用户名：<input type="text" name="uid" required> 
+		<p>课程名：<input type="text" name="className" required> 
 		<div class="modal-footer" style="background-color:#fff">
     <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
     <button type="submit" class="button glow button-rounded button-flat-primary">添加</button>

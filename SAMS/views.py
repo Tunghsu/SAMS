@@ -697,6 +697,7 @@ def tallview(request):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
+<<<<<<< HEAD
     m = Class_Course_Relation.objects.filter(tID = request.session['uid'])
     matrix = []
     line = {}
