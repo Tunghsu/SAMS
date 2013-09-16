@@ -82,7 +82,7 @@ def result(request):
     return HttpResponse('Managed to Login')
 def admin(request):
     try:
-        if (not 'uid' in request.session) or (request.session['group']<>'a'):
+        if (not 'uid' in request.session) or (request.session['group']!='a'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
@@ -143,7 +143,7 @@ def admin(request):
     return  render_to_response('admin.html', {'title': "管理页面",  'hint':hint, 'matrix':matrix})
 def course(request, offset):
     try:
-        if (not 'uid' in request.session) or (request.session['group']<>'a'):
+        if (not 'uid' in request.session) or (request.session['group']!='a'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
@@ -180,7 +180,7 @@ def course(request, offset):
     return  render_to_response('course.html', {'title': courseStr+"课程班级查看页面", 'matrix':matrix, 'hint':hint})
 def classes(request, offset):#不删除学生身份，只删除其课程
     try:
-        if (not 'uid' in request.session) or (request.session['group']<>'a'):
+        if (not 'uid' in request.session) or (request.session['group']!='a'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
