@@ -1,11 +1,30 @@
 {% include "header.html" %}
-<body>
- {% if hint %}
- <h3>{{ hint }} </h3>
+<body style="margin-top: 50px;">
+ 
+ <div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid">
+				<div class="span3">
+				</div>
+				<div class="span6">
+					<div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  	{% if hint %}
+ <h4>{{ hint }} </h4>
  {% endif %}
+</div>
+			
+				</div>
+				<div class="span3">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <form name="input" action="" method="get">
 
-<table border="1">
+<table class="table table-hover table-condensed">
 	<tr>
 		<th>选择</th>
 		<th>学生编号</th>

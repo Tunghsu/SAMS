@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*- 
 from django.http import HttpResponseRedirect, HttpResponse
+import datetime
 from django.template import  Context
 from django.template.loader import get_template
 from django.db.models import Count
@@ -138,7 +139,7 @@ def admin(request):
         line['courseName'] = i.cName
         line['courseID'] = i.cID
         tmp ='%d' % i.cID
-        line['viewcourse'] = 'http://localhost:8000/course/'+tmp
+        line['viewcourse'] = '../course/'+tmp
         matrix.append(dict(line))    
     return  render_to_response('admin.html', {'title': "管理页面",  'hint':hint, 'matrix':matrix})
 def course(request, offset):
@@ -212,17 +213,17 @@ def check(request):
     return HttpResponse('Assignment Check Page')
 def view(request):
     try:
-        if (not 'uid' in request.session) or (request.session['group']<>'t'):
+        if (not 'uid' in request.session) or (request.session['group']!='t'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
     m = Class_Course_Relation.objects.filter(tID = request.session['uid']).order_by("clID")
+    line = {}
+    matrix = []
     if not m:
         #无课程
         pass
     else:
-        line = {}
-        matrix = []
         #try
         for i in m:
             line['classNum'] = i.clID
@@ -236,13 +237,13 @@ def view(request):
             line['assignmentDetail'] = 'http://localhost:8000/detail/'+tmp
             line['viewassignment'] = 'http://localhost:8000/checkassign/'+tmp
             matrix.append(dict(line))
-        t = get_template("teacher.html")
-        html = t.render(Context({'title':'教师作业批改系统','matrix':matrix}))
+    t = get_template("teacher.html")
+    html = t.render(Context({'title':'教师作业批改系统','matrix':matrix}))
     return HttpResponse(html)
 def checkassign(request, offset):
 #教师检查作业,改模式版式
     try:
-        if (not 'uid' in request.session) or (request.session['group']<>'t'):
+        if (not 'uid' in request.session) or (request.session['group']!='t'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
@@ -263,21 +264,30 @@ def checkassign(request, offset):
         line['submitDate'] = i.asfDate
         line['studentName'] = Student.objects.get(sID = i.sID).sName
         assignmentFileNum = '%d' % i.asfID
-        line['downloadLink'] = '../download/'+ assignmentFileNum
+        line['downloadLink'] = 'http://localhost:8000/download/'+ assignmentFileNum
         line['rate'] = '../rate/'+ assignmentFileNum
         matrix.append(dict(line))
     return render_to_response('checkassign.html', {'title': title, 'matrix':matrix})
-def rate(request):
+def rate(request, offset):
     try:
-        if (not 'uid' in request.session) or (request.session['group']<>'t'):
+        if (not 'uid' in request.session) or (request.session['group']!='t'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
+    para = int(offset)
+    hint = []
+        #The name of input field s are comment and  mark
+    if 'comment' in request.GET:
+            AssignmentFile.objects.get(asfID = para).update(asfComment = request.GET['comment'])
+            hint.append('Commment added')
+    if 'mark' in request.GET:
+            AssignmentFile.objects.get(asfID = para).update(asfMark = request.GET['mark'])
+            hint.append('Mark added')
         #未完待续
     return ''
 def submit(request):
     try:
-        if (not 'uid' in request.session) or (request.session['group']<>'s'):
+        if (not 'uid' in request.session) or (request.session['group']!='s'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
@@ -288,21 +298,25 @@ def submit(request):
             t = True
             asfID = AssignmentFile.objects.order_by('-asfID')[0].asfID+1
             asID = request.POST['radio']
-            sID = request.session['uid']
-            sIDStr = '%d' % sID
-            sName = Student.objects.get(sID = sID).sName
-            if AssignmentFile.objects.filter(asID = request.POST['radio'], sID = request.session['uid']):
-                default_storage.delete('/home/tunghsu/workspace/SAMS/media/'+str(AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).asFile))
-                AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).delete()
-                t = False
-            request.FILES['File'].name = sIDStr+'_'+sName+'_'+request.FILES['File'].name
-            instance = AssignmentFile(asfID = asfID ,sID = sID, asID = asID, asFile = request.FILES['File'])
-            instance.save()
-            if t:
-                fn = Assignment.objects.get(asID = asID).asFinishPopu
-                fn +=1
-                Assignment.objects.get(asID = asID).update(asFinishPopu = fn)
-            hint = "Upload succeed"
+            ex = Assignment.objects.get(asID = asID).asExpire
+            if ex<datetime.datetime.now():
+                hint = "Assignment Expired"
+            else:
+                sID = request.session['uid']
+                sIDStr = '%d' % sID
+                sName = Student.objects.get(sID = sID).sName
+                if AssignmentFile.objects.filter(asID = request.POST['radio'], sID = request.session['uid']):
+                    default_storage.delete('/home/tunghsu/workspace/SAMS/media/'+str(AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).asFile))
+                    AssignmentFile.objects.get(asID = request.POST['radio'], sID = request.session['uid']).delete()
+                    t = False
+                request.FILES['File'].name = sIDStr+'_'+sName+'_'+request.FILES['File'].name
+                instance = AssignmentFile(asfID = asfID ,sID = sID, asID = asID, asFile = request.FILES['File'])
+                instance.save()
+                if t:
+                    fn = Assignment.objects.get(asID = asID).asFinishPopu
+                    fn +=1
+                    Assignment.objects.get(asID = asID).update(asFinishPopu = fn)
+                hint = "Upload succeed"
         else:
             hint = "File not selected"
     m = Student_Class_Relation.objects.filter(sID = request.session['uid']).order_by("sClID")
@@ -343,9 +357,15 @@ def submit(request):
                         line['assignmentDetail'] = '../detail/'+tmp
                         found =  AssignmentFile.objects.filter(asID = line['assignmentNum'], sID = request.session['uid'])
                         if found:
+                            line['comment'] = found[0].asfComment
+                            line['mark'] = found[0].asfMark
                             line['finish'] = "已提交"
                         else:
+                            line['comment']=''
+                            line['mark'] = ''
                             line['finish'] = "尚未提交"
+                            if line['expire']<datetime.datetime.now():
+                                line['finish']="Expired"
                 except:
                     pass
                 matrix.append(dict(line))
@@ -358,7 +378,7 @@ def submit(request):
     return HttpResponse(html)
 def viewAssignment(request, offset):
     try:
-        if (not 'uid' in request.session) or (request.session['group']<>'t'):
+        if (not 'uid' in request.session) or (request.session['group']!='t'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
@@ -371,7 +391,7 @@ def viewAssignment(request, offset):
     return  render_to_response('blank.html', {'title': "作业详情",'txt':txt})
 def nework(request,offset):#未完成
     try:
-        if (not 'uid' in request.session) or (request.session['group']<>'t'):
+        if (not 'uid' in request.session) or (request.session['group']!='t'):
             return HttpResponseRedirect('/login/')
     except KeyError:
         return HttpResponseRedirect('/login/')
@@ -380,20 +400,36 @@ def nework(request,offset):#未完成
     #except:
         #URL错误
         #pass
-    hint=''
+    hint='Add assignment Failed'
     if request.method=='GET':#实际上有缺陷
         asID = Assignment.objects.filter(clID=offset).order_by("-asDate")[0].asID+1
         asTXT = request.GET['txt']
-        instance = Assignment(asID=asID,asTXT=asTXT,clID=para)
+        now = datetime.datetime.now()
+        hour = request.GET['hour']
+        day = request.GET['day']
+        end = now + datetime.timedelta(hours=hour)
+        end += datetime.datedelta(days=day)
+        asExpire = end
+        instance = Assignment(asID=asID, asTXT= asTXT,clID= para, asExpire=asExpire)
         instance.save()
         hint=" 添加作业成功"
     return  render_to_response('assign_create.html', {'title': "布置作业",'hint':hint})
         
 def download(request, offset):
+    
+    try:
+        if (not 'uid' in request.session) or (request.session['group']!='t' and request.session['group']!='s'):
+            return HttpResponseRedirect('/login/')
+    except KeyError:
+        return HttpResponseRedirect('/login/')
     #try:
     para = int (offset)
     #except:
         #404
+    if request.session['group'] =='s':
+        num = AssignmentFile.objects.get(asfID = para).sID
+        if sID != request.session['uid']:
+            return HttpResponseRedirect('/login/')
     #try:
     filefield = AssignmentFile.objects.get(asfID = para).asFile
     files = file(u'/home/tunghsu/workspace/SAMS/media/'+filefield.name)
@@ -469,7 +505,7 @@ def profile(request):
                         hint.append("用户密码已更改")
                 except:
                     pass
-    return render_to_response('profile.html', {'title': "修改个人信息", 'hint':hint})
+    return render_to_response('profile.html', {'title': "修改个人信息", 'hint':hint,'uid':request.session['uid']})
 def logout(request):
     try:
         if request.session['uid']:
@@ -529,6 +565,7 @@ def search(request):
                     cl["courseName"] = i.cName
                     cm.append(dict(cl))
                         #未完待续，方法雷同
+                        #
         if request.session['group'] == 't':
             if sls:
                 for i in sls:
@@ -588,7 +625,8 @@ def search(request):
                     #tl["teacherAffi"] = i.tAffi
                     tm.append(dict(tl))
                     
-                    
-        
     return render_to_response('search.html', {'title': "网路搜寻", 'hint':hint,'sm':sm,'tm':tm,'cm':cm})
 #注册、邀请码
+def allview(request, offset):#for students to view  assignments they submitted
+    return ''
+

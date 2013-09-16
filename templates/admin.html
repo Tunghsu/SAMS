@@ -1,46 +1,71 @@
 {% include "header.html" %}
-<body>
- {% if hint %}
- <h3>{{ hint }} </h3>
- {% endif %}
- <form action="" method="post">
-        <p>用户名：<input type="text" name="uid">
-        <p>密码：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="password" name="passwd">
-		<p>姓名：&nbsp;&nbsp;&nbsp;&nbsp;<input  type="text" name="name">
-		<p>邮箱：&nbsp;&nbsp;&nbsp;&nbsp;<input  type="text" name="mail">
-        <p>学生<input type="radio" class="input-medium"  name="q" checked="checked" value="student" />
-	&nbsp;教师<input type="radio" name="q" value="teacher" />
-        &nbsp;管理员<input type="radio" name="q" value="admin" />
-        <p><input type="submit" class="btn btn-primary" value="确定">
-    </form>
+<body style="margin-top: 50px;">
+<h3>系统管理页面</h3>
+{% if hint %}<div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
 
-	 <form action="" method="post">
-        <p>课程号：<input type="text" name="id">
-        <p>课程名：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="name">
-        <p><input type="submit" class="btn btn-primary" value="确定">
-    </form>
-	
-	 <form action="" method="post">
-        <p>班级号：<input type="text" name="classID"> 
-        <p>课程号：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="courseID"> 
-		<p>教师号：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="teacher"> 
-		<p>课程人数：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="amount"> 
-		<p><input type="submit" class="btn btn-primary" value="确定">
-    </form>
-	
-	<form action="" method="post">
-        <p>用户名：<input type="text" name="uid"> 
-		<p>课程号：&nbsp;&nbsp;&nbsp;&nbsp;<input class="input-medium" type="text" name="className"> 
-		<p><input type="submit" class="btn btn-primary" value="确定">
-    </form>
-<table border="1">
+ <h4>{{ hint }} </h4>
+
+</div> {% endif %}
+<!--
+ <div class="container-fluid" style="display:none;">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid">
+				<div class="span3">
+				</div>
+				<div class="span6">
+				  	<!--{% if hint %}<div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+
+ <h4>{{ hint }} </h4>
+
+</div> {% endif %}-->
+			
+				</div>
+				<div class="span3">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+ 
+ <div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">用户信息</a></li>
+    <li><a href="#tab2" data-toggle="tab">课程信息</a></li>
+	<li><a href="#tab3" data-toggle="tab">班级信息</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+      <p><form name="input" action="" method="get">
+
+<table class="table table-hover table-condensed">
+	<tr>
+		<th>选择</th>
+		<th>学生编号</th>
+		<th>学生姓名</th>
+	</tr>
+{% for i in matrix %}
+<tr>
+  <td><input type="checkbox" name="box" value="{{ i.studentID }}" /></td>
+  <td>{{ i.studentID }}</td>
+  <td>{{ i.studentName }}</td>
+</tr>
+{% endfor %}
+</table>
+<button type="submit" class="button glow button-rounded button-flat-caution">删除</button>
+</form></p>
+    </div>
+    <div class="tab-pane" id="tab2">
+      <p> <form name="input" action="" method="get"><table class="table table-hover table-condensed">
 	<tr>
 		<th>选择</th>
 		<th>课程序号</th>
 		<th>课程名称</th>
 		<th>查看</th>
 	</tr>
-<form>
+
 	{% for i in matrix %}	
 	<tr>
 		<td><input type="checkbox" name="box" value ="{{ i.courseID }}" > </td>
@@ -50,6 +75,129 @@
 	</tr>
 {% endfor %}
 </table>
-<input type="submit" action="" value="删除"></form>
-</body>
+<button type="submit" class="button glow button-rounded button-flat-caution">删除</button>
+</form></p>
+    </div>
+	<div class="tab-pane" id="tab3">
+      <p><form name="input" action="" method="get">
+
+<table class="table table-hover table-condensed">
+	<tr>
+		<th>选择</th>
+		<th>班级编号</th>
+		<th>教师姓名</th>
+		<th>查看</th>
+	</tr>
+{% for i in matrix %}
+<tr>
+  <td><input type="checkbox" name="box" value="{{ i.classID }}" /></td>
+  <td>{{ i.classID }}</td>
+  <td>{{ i.teacher }}</td>
+  <td><a href="{{ i.viewcourse }}"><img src="" alt="详细信息"></a></td>
+</tr>
+{% endfor %}
+</table>
+<button type="submit" class="button glow button-rounded button-flat-caution">删除</button>
+</form></p>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid">
+				<div class="span4">
+				</div>
+				<div class="span4">
+				<!-- Button to trigger modal -->
+<a href="#myModal" role="button" class="button glow button-rounded button-flat-primary btn-block" data-toggle="modal">添加</a>
+ 
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 410px;
+margin-left: -200px;">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+   <div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">添加用户</a></li>
+    <li><a href="#tab2" data-toggle="tab">添加课程</a></li>
+	<li><a href="#tab3" data-toggle="tab">添加班级</a></li>
+	<li><a href="#tab4" data-toggle="tab">添加课程学生</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+      <p><form action="" method="post">
+        <p>用户名：<input type="text" name="uid">
+        <p>&nbsp;&nbsp;&nbsp;密码：<input  type="password" name="passwd">
+		<p>&nbsp;&nbsp;&nbsp;姓名：<input  type="text" name="name">
+		<p>&nbsp;&nbsp;&nbsp;邮箱：<input  type="text" name="mail">
+        <p>&nbsp;&nbsp;&nbsp;<label class="radio inline"><input type="radio" name="q" checked="checked" value="student">
+学生
+</label>
+&nbsp;&nbsp;&nbsp;<label class="radio inline">
+<input type="radio" name="q" value="teacher">
+教师
+</label>
+&nbsp;&nbsp;&nbsp;<label class="radio inline">
+<input type="radio" name="q" value="administrator">
+管理员
+</label>
+        <div class="modal-footer" style="background-color:#fff">
+    <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
+    <button type="submit" class="button glow button-rounded button-flat-primary">添加</button>
+  </div>
+    </form></p>
+    </div>
+    <div class="tab-pane" id="tab2">
+      <p>
+	 <form action="" method="post">
+        <p>课程号：<input type="text" name="id">
+        <p>课程名：<input type="text" name="name">
+		<div class="modal-footer" style="background-color:#fff">
+    <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
+    <button type="submit" class="button glow button-rounded button-flat-primary">添加</button>
+  </div>
+    </form></p>
+    </div>
+	 <div class="tab-pane" id="tab3">
+      <p> <form action="" method="post">
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;班级号：<input type="text" name="classID"> 
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;课程号：<input type="text" name="courseID"> 
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;教师号：<input type="text" name="teacher"> 
+		<p>课程人数：<input type="text" name="amount"> 
+		<div class="modal-footer" style="background-color:#fff">
+    <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
+    <button type="submit" class="button glow button-rounded button-flat-primary">添加</button>
+  </div>
+    </form></p>
+    </div>
+	 <div class="tab-pane" id="tab4">
+      <p>
+	<form action="" method="post">
+        <p>用户名：<input type="text" name="uid"> 
+		<p>课程名：<input type="text" name="className"> 
+		<div class="modal-footer" style="background-color:#fff">
+    <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
+    <button type="submit" class="button glow button-rounded button-flat-primary">添加</button>
+  </div>
+    </form></p>
+    </div>
+  </div>
+</div>
+  </div>
+  
+</div>
+				</div>
+				<div class="span4">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	
+	
+	
+
+
 {% include "footer.html" %}

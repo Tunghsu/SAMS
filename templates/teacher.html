@@ -1,5 +1,23 @@
 {% include "header.html" %}
-<body>
+<body style="margin-top: 50px;">
+<!-- Button to trigger modal -->
+<a href="#myModal" role="button" class="button glow button-rounded button-flat-primary" data-toggle="modal">添加作业</a>
+ 
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Modal header</h3>
+  </div>
+  <div class="modal-body">
+    <p>nework函数简直就是不知所云，一个asDate一个txt，又不能选课程，又不能提交id，又不能是表单，那用表格选就还要弹一次，烦不烦啊</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    <button class="btn btn-primary">Save changes</button>
+  </div>
+</div>
+<h3>所属课程状态</h3>
 <table class="table table-hover table-condensed">
 	<tr>
 		<th>序号</th>
@@ -20,11 +38,26 @@
   <td>{{ i.population }}</td>
   <td>{{ i.assignmentNum }}</td>
   <td>{{ i.assignmentAmount }}</td>
-  <td><a href="{{ i.assignmentDetail }}"><img src="" alt="无"></a></td>
-  <td><a href="{{ i.viewassignment }}"><img src="" alt="无"></a></td>
+  <td><!-- Button to trigger modal -->
+<a href="#myModal{{ i.classNum }}" role="button" class="icon-pencil" data-toggle="modal">查看</a><!-- Icon glyphs图标没用 -->
+<!-- Modal -->
+<div id="myModal{{ i.classNum }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">{{ i.courseName }}第{{ i.assignmentNum }}次作业详情</h3>
+  </div>
+  <div class="modal-body">
+    <p>{{i.txt}}</p>
+  </div>
+  <div class="modal-footer">
+     <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
+  </div>
+</div></td>
+  <td><a href="{{ i.viewassignment }}"><i class="icon-pencil"></i>查看</a></td>
   <td>{{ i.finishPopu }}</td>
 </tr>
 {% endfor %}
 </table>
+
 </body>
 {% include "footer.html" %}
