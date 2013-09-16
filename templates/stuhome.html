@@ -1,29 +1,12 @@
 {% include "header.html" %}
 <body style="margin-top: 50px;">
 <h3>提交课程作业</h3>
-<div class="container-fluid" style="display:none;">
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="row-fluid">
-				<div class="span3">
-				</div>
-				<div class="span6">
-				{% if hint %}
-	  	{% if hint %}<div class="alert">
+{% if hint %}<div class="alert">
   <button type="button" class="close" data-dismiss="alert">&times;</button>
 
  <h4>{{ hint }} </h4>
 
 </div> {% endif %}
-			
-				</div>
-				 {% endif %}
-				<div class="span3">
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
  
 
 <form name="input" enctype="multipart/form-data" action="" method="POST">
@@ -40,6 +23,7 @@
 		<th>提交期限</th>
 		<th>详细信息</th>
 		<th>状态</th>
+		<th>教师评价</th>
 	</tr>
 {% for i in matrix %}
 <tr class="active">
@@ -52,8 +36,37 @@
   <td>{{ i.population }}</td>
   <td>{{ i.assignmentNum }}</td>
   <td>{{ i.expire }}</td>
-  <td><a href="{{ i.assignmentDetail }}"><i class="icon-list"></i>查看</a></td>
+    <td><!-- Button to trigger modal -->
+<a href="#myModal{{ i.classNum }}" role="button" class="icon-pencil" data-toggle="modal">查看</a><!-- Icon glyphs图标没用 -->
+<!-- Modal -->
+<div id="myModal{{ i.classNum }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">{{ i.courseName }}第{{ i.assignmentNum }}次作业详情</h3>
+  </div>
+  <div class="modal-body">
+    <p>{{i.txt}}</p>
+  </div>
+  <div class="modal-footer">
+     <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
+  </div>
+</div></td>
   <td>{{ i.finish }}</td>
+  <td><!-- Button to trigger modal -->
+<a href="#myModalasg{{ i.classNum }}" role="button" class="icon-pencil" data-toggle="modal">查看</a><!-- Icon glyphs图标没用 -->
+<!-- Modal -->
+<div id="myModalasg{{ i.classNum }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">{{ i.courseName }}第{{ i.assignmentNum }}次作业评价</h3>
+  </div>
+  <div class="modal-body">
+    <p>分数：{{i.mark}}<br/>评语：{{i.comment}}</p>
+  </div>
+  <div class="modal-footer">
+     <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
+  </div>
+</div></td>
 </tr>
 {% endfor %}
 </table>

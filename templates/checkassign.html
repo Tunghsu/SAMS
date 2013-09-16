@@ -1,11 +1,6 @@
 {% include "header.html" %}
 <body style="margin-top: 50px;">
-<div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="row-fluid">
-				<div class="span6">
-				<table class="table table-hover table-condensed">
+			<table class="table table-hover table-condensed">
 	<tr>
 		<th>学号</th>
 		<th>姓名</th>
@@ -18,40 +13,22 @@
   <td>{{ i.studentID }}</td>
   <td>{{ i.studentName }}</td>
   <td>{{ i.submitDate }}</td>
-   <td><a href="#mypopover" class="icon-pencil" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." title="" data-original-title="Popover on top">评分</a>
-  <div id="mypopover" class="popover fade top in" style="top: -58px; left: 58.5px; display: block; "><div class="arrow"></div><div class="popover-content"><input type="text" class="input-block-level" placeholder="请输入分数或等级"  name="rate"> <button class="button glow button-rounded button-flat-primary" type="submit" action="">提交</button></div></div></td>
+  <td><form action="" method="post">
+        <p>分数：<input type="text" name="mark">
+        <p>评语：<textarea rows="5" style="display:inline;" placeholder="请在此输入对这份作业评语" name="comment"></textarea>
+		<p><input type="text" style="display:none;" name="asfID" value="{{ i.classNum }}">
+		<div class="modal-footer" style="background-color:#fff">
+    <button class="button button-rounded button-flat" data-dismiss="modal" aria-hidden="true">关闭</button>
+    <button type="submit" class="button glow button-rounded button-flat-primary">提交</button>
+  </div>
+    </form></td>
+   <!-- <td><a href="#mypopover" class="icon-pencil" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." title="" data-original-title="Popover on top">评分</a>
+  <div id="mypopover" class="popover fade top in" style="top: -58px; left: 58.5px; display: block; "><div class="arrow"></div><div class="popover-content"><input type="text" class="input-block-level" placeholder="请输入分数或等级"  name="rate"> <button class="button glow button-rounded button-flat-primary" type="submit" action="">提交</button></div></div></td> -->
   <!-- <td>{{ i.rate }}</td> -->
   <td><a href="{{ i.downloadLink }}"><img src="" alt="下载"></a></td>
 </tr>
 {% endfor %}
 </table>
-				</div>
-				<div class="span6">
-				<table class="table table-hover table-condensed">
-	<tr>
-		<th>学号</th>
-		<th>姓名</th>
-		<th>提交日期</th>
-		<th>评分</th>
-		<th>下载</th>
-	</tr>
-{% for i in matrix %}<!-- 需要找到判定forloop.counter单双数的方法 -->
-<tr>
-  <td>{{ i.studentID }}</td>
-  <td>{{ i.studentName }}</td>
-  <td>{{ i.submitDate }}</td>
-  <td><a href="#mypopover" class="icon-pencil" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." title="" data-original-title="Popover on top">评分</a>
-  <div id="mypopover" class="popover fade top in" style="top: -58px; left: 58.5px; display: block; "><div class="arrow"></div><div class="popover-content"><input type="text" class="input-block-level" placeholder="请输入分数或等级"  name="rate"> <button class="button glow button-rounded button-flat-primary" type="submit" action="">提交</button></div></div></td>
-  <!-- <td>{{ i.rate }}</td> -->
-  <td><a href="{{ i.downloadLink }}"><img src="" alt="下载"></a></td>
-</tr>
-{% endfor %}
-</table>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 
 </body>
 {% include "footer.html" %}
